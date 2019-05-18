@@ -41,7 +41,7 @@
       <v-list class="pt-0" dense>
         <v-divider></v-divider>
 
-        <v-list-tile v-for="item in links" :key="item.title" @click="item.route">
+        <v-list-tile v-for="item in links" :key="item.title" route :to="item.route">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>

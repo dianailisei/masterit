@@ -18,6 +18,22 @@ export default new Router({
         {
           path: 'team',
           component: () => import('./components/Mentor/Team.vue')
+        },
+        {
+          path: 'meetings',
+          component: () => import('./components/Mentor/Meetings.vue')
+        },
+        {
+          path: 'sprints',
+          component: () => import('./components/Mentor/SprintSettings.vue')
+        },
+        {
+          path: 'exam',
+          component: () => import('./components/Mentor/Exam.vue')
+        },
+        {
+          path: 'question',
+          component: () => import('./components/Mentor/Question.vue')
         }
       ]
     }

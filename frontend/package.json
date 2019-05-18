@@ -53,5 +53,9 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "description": "## Project setup ``` npm install ```",
+  "main": ".eslintrc.js",
+  "author": "",
+  "license": "ISC"
 }

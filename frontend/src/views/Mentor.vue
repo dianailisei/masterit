@@ -20,8 +20,8 @@ export default {
         { icon: "dashboard", title: "Dashboard", route: "/mentor/dashboard" },
         { icon: "people", title: "Team", route: "/mentor/team" },
         { icon: "meeting_room", title: "Meetings", route: "/mentor/meetings" },
-        { icon: "build", title: "Sprint settings", route: "/mentor/sprint" },
-        { icon: "done_outline", title: "Questions", route: "/mentor/questions" },
+        { icon: "build", title: "Sprint settings", route: "/mentor/sprints" },
+        { icon: "done_outline", title: "Questions", route: "/mentor/question" },
         { icon: "assignment", title: "Exam", route: "/mentor/exam" },
         { icon: "feedback", title: "Feedback tests", route: "/mentor/feedback" },
         { icon: "exit_to_app", title: "Sign out", route: "/" }
