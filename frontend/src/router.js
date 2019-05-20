@@ -34,6 +34,14 @@ export default new Router({
         {
           path: 'question',
           component: () => import('./components/Mentor/Question.vue')
+        },
+        {
+          path: 'feedback',
+          component: () => import('./components/Mentor/Feedback.vue')
+        },
+        {
+          path: 'test',
+          component: () => import('./components/Mentor/Test.vue')
         }
       ]
     }

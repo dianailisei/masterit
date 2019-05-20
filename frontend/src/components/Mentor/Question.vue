@@ -12,13 +12,32 @@
                 <v-combobox
                   multiple
                   v-model="question.answers"
-                  label="Tags"
+                  label="Answers"
                   append-icon
                   chips
                   deletable-chips
                   :search-input.sync="search"
                   @keyup.tab="updateTags"
+                  color="white"
                 ></v-combobox>
+                <v-combobox
+                  multiple
+                  v-model="question.correctAnswers"
+                  label="Correct Answers"
+                  append-icon
+                  chips
+                  deletable-chips
+                  :search-input.sync="search"
+                  @keyup.tab="updateTags"
+                  color="white"
+                ></v-combobox>
+                <v-switch color="indigo darken-3" v-model="snippet" label="Snippet"></v-switch>
+                <v-textarea v-if="snippet" color="white"></v-textarea>
+                <v-layout align-center justify-end row fill-height class="pa-3">
+                  <v-btn color="white" dark outline fab>
+                    <v-icon>save</v-icon>
+                  </v-btn>
+                </v-layout>
               </v-form>
             </v-card-text>
           </v-card>
@@ -30,8 +49,10 @@
 
 <script>
 export default {
+  name: "Question",
   data() {
     return {
+      snippet: false,
       question: {
         question:
           "2. What will be printed as the output of the following program?",
@@ -55,11 +76,20 @@ public class testincr
   methods: {
     updateTags() {
       this.$nextTick(() => {
-        this.select.push(...this.search.split(","));
+        this.question.answers.push(...this.search.split(","));
         this.$nextTick(() => {
           this.search = "";
         });
       });
+    },
+    toggleSnippet() {
+      this.snippet = !this.snippet;
+      let snippetContainer = document.getElementById("snippetContainer");
+      if (this.snippet) {
+        snippetContainer.classList.remove("hidden");
+      } else {
+        snippetContainer.classList.add("hidden");
+      }
     }
   }
 };

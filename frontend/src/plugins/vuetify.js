@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, { VLayout } from 'vuetify/lib'
 import 'vuetify/src/stylus/app.styl'
 
 Vue.use(Vuetify, {
@@ -7,5 +7,8 @@ Vue.use(Vuetify, {
   theme: {
     navbarColor: '#42b883',
     cardColor: '#35495e'
+  },
+  components: {
+    VLayout
   }
 })
