@@ -83,4 +83,7 @@ export default {
 </script>
 
 <style>
+.rounded-corners {
+  border-radius: 5px;
+}
 </style>

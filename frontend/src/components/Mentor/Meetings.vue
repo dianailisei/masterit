@@ -8,7 +8,7 @@
             <h2 class="font-weight-thin pb-1">Alarms settings</h2>
             <v-card-text>
               <v-form>
-                <v-select :items="dailyMeetings" label="Daily Meetings" menu-props="offsetY" id="dailyMeeting" clearable></v-select>
+                <v-select color="white" :items="dailyMeetings" label="Daily Meetings" menu-props="offsetY" id="dailyMeeting" clearable></v-select>
                 <v-layout row wrap>
                   <v-flex xs12 sm12 md12 lg12>
                     <h3 class="font-weight-thin">Sprint Planning</h3>

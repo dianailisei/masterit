@@ -8,6 +8,10 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/',
+      component: () => import('./views/Register.vue')
+    },
+    {
       path: '/mentor',
       component: () => import('./views/Mentor.vue'),
       children: [

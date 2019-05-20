@@ -41,7 +41,7 @@
           </v-layout>
         </v-flex>
         <v-flex xs12 sm10 md8 lg8 align-center offset-md2 offset-lg2 class="py-5">
-          <v-card color="white" class="rounded-corners hidden" id="java-questions">
+          <v-card color="white" class="rounded-corners" v-if="dark1">
             <v-card-title>
               <h2 class="font-weight-light pb-1 pl-2">Java Questions</h2>
             </v-card-title>
@@ -96,7 +96,7 @@
               </v-layout>
             </v-card-actions>
           </v-card>
-          <v-card color="white" class="rounded-corners hidden" id="net-questions">
+          <v-card color="white" class="rounded-corners" v-if="dark2">
             <v-card-title>
               <h2 class="font-weight-light pb-1 pl-2">.NET Questions</h2>
             </v-card-title>
@@ -151,7 +151,7 @@
               </v-layout>
             </v-card-actions>
           </v-card>
-          <v-card color="white" class="rounded-corners hidden" id="testing-questions">
+          <v-card color="white" class="rounded-corners" v-if="dark3">
             <v-card-title>
               <h2 class="font-weight-light pb-1 pl-2">Testing Questions</h2>
             </v-card-title>
@@ -206,7 +206,7 @@
               </v-layout>
             </v-card-actions>
           </v-card>
-          <v-card color="white" class="rounded-corners hidden" id="dev-questions">
+          <v-card color="white" class="rounded-corners" v-if="dark4">
             <v-card-title>
               <h2 class="font-weight-light pb-1 pl-2">Dev Ops Questions</h2>
             </v-card-title>
@@ -316,56 +316,39 @@ public class testincr
     toggleButton1() {
       this.dark1 = !this.dark1;
       this.outline1 = !this.outline1;
-      let questionsContainer = document.getElementById("java-questions");
       if (this.dark1 == true) {
-        questionsContainer.classList.remove("hidden");
         if (this.dark2 == true) this.toggleButton2();
         if (this.dark3 == true) this.toggleButton3();
         if (this.dark4 == true) this.toggleButton4();
-      } else {
-        questionsContainer.classList.add("hidden");
       }
     },
     toggleButton2() {
       this.dark2 = !this.dark2;
       this.outline2 = !this.outline2;
-      let questionsContainer = document.getElementById("net-questions");
       if (this.dark2 == true) {
-        questionsContainer.classList.remove("hidden");
         if (this.dark1 == true) this.toggleButton1();
         if (this.dark3 == true) this.toggleButton3();
         if (this.dark4 == true) this.toggleButton4();
-      } else {
-        questionsContainer.classList.add("hidden");
       }
     },
     toggleButton3() {
       this.dark3 = !this.dark3;
       this.outline3 = !this.outline3;
-      let questionsContainer = document.getElementById("testing-questions");
       if (this.dark3 == true) {
-        questionsContainer.classList.remove("hidden");
         if (this.dark1 == true) this.toggleButton1();
         if (this.dark2 == true) this.toggleButton2();
         if (this.dark4 == true) this.toggleButton4();
-      } else {
-        questionsContainer.classList.add("hidden");
       }
     },
     toggleButton4() {
       this.dark4 = !this.dark4;
       this.outline4 = !this.outline4;
-      let questionsContainer = document.getElementById("dev-questions");
       if (this.dark4 == true) {
-        questionsContainer.classList.remove("hidden");
         if (this.dark1 == true) this.toggleButton1();
         if (this.dark3 == true) this.toggleButton3();
         if (this.dark2 == true) this.toggleButton2();
-      } else {
-        questionsContainer.classList.add("hidden");
       }
     }
-    
   }
 };
 </script>
@@ -373,5 +356,8 @@ public class testincr
 <style>
 .hidden {
   display: none;
+}
+.rounded-corners {
+  border-radius: 5px;
 }
 </style>

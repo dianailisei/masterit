@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuetify, { VLayout } from 'vuetify/lib'
+import Vuetify, { VLayout, VSelect } from 'vuetify/lib'
 import 'vuetify/src/stylus/app.styl'
 
 Vue.use(Vuetify, {
@@ -9,6 +9,6 @@ Vue.use(Vuetify, {
     cardColor: '#35495e'
   },
   components: {
-    VLayout
+    VLayout, VSelect
   }
 })
