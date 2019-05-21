@@ -12,6 +12,28 @@ export default new Router({
       component: () => import('./views/Register.vue')
     },
     {
+      path: "/student",
+      component: () => import('./views/Student.vue'),
+      children: [
+        {
+          path: 'dashboard',
+          component: () => import('./components/Student/Dashboard.vue')
+        },
+        {
+          path: 'team',
+          component: () => import('./components/Student/Team.vue')
+        },
+        {
+          path: 'exam',
+          component: () => import('./components/Student/Exam.vue')
+        },
+        {
+          path: 'feedback',
+          component: () => import('./components/Student/Feedback.vue')
+        }
+      ]
+    },
+    {
       path: '/mentor',
       component: () => import('./views/Mentor.vue'),
       children: [
