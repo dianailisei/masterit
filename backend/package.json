@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./lib/server.ts",
+    "prod": "node ./lib/server.ts"
+  },
+  "author": "Diana Ilisei",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^12.0.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongo": "^0.1.0",
+    "mongodb": "^3.2.6",
+    "mongoose": "^5.5.11",
+    "ts-node": "^8.2.0",
+    "typegoose": "^5.6.0",
+    "typescript": "^3.4.5",
+    "typescript-ioc": "^1.2.5"
+  }
+}
