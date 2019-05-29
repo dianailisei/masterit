@@ -1,12 +1,22 @@
-import { prop, Typegoose } from 'typegoose';
+import { prop, Typegoose, Ref } from 'typegoose';
+import { Student } from './Student';
 
 export class Mentor extends Typegoose {
-    @prop({required: true})
+    @prop({ required: true })
     firstName: string;
 
-    @prop({required: true})
+    @prop({ required: true })
     lastName: string;
 
-    @prop({default: Date.now})
+    @prop({ required: true })
+    email: string;
+
+    @prop({ required: true })
+    password: string;
+
+    @prop({ ref: Student})
+    team: Ref<Student>[];
+
+    @prop({ default: Date.now })
     creationDate: Date;
 }

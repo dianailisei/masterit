@@ -3,6 +3,10 @@ import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 import { MentorController } from "./controllers/MentorController";
 import { StudentController } from "./controllers/StudentController";
+import { CourseController } from "./controllers/CourseController";
+import { SprintController } from "./controllers/SprintController";
+import { QuestionController } from "./controllers/QuestionController";
+import { FeedbackController } from "./controllers/FeedbackController";
 import { config, IocContainerConfig } from "./config";
 import { Inject } from "typescript-ioc";
 
@@ -21,8 +25,21 @@ export class App {
 
     @Inject
     private mentorController: MentorController;
+
     @Inject
     private studentController: StudentController;
+
+    @Inject
+    private courseController: CourseController;
+
+    @Inject
+    private sprintController: SprintController;
+
+    @Inject
+    private questionController: QuestionController;
+
+    @Inject
+    private feedbackController: FeedbackController;
 
     private config(): void {
         this.app.use(bodyParser.json({ type: 'application/json' }));
@@ -46,11 +63,18 @@ export class App {
     }
 
     private routes(): void {
-        this.app.use('/api/v1/mentors', this.mentorController.getRoutes());
-        this.app.use('/api/v1/students', this.studentController.getRoutes());
+        this.app.use('/api/v1/mentor', this.mentorController.getRoutes());
+        this.app.use('/api/v1/student', this.studentController.getRoutes());
+        this.app.use('/api/v1/course', this.courseController.getRoutes());
+        this.app.use('/api/v1/sprint', this.sprintController.getRoutes());
+        this.app.use('/api/v1/question', this.questionController.getRoutes());
+        this.app.use('/api/v1/feedback', this.feedbackController.getRoutes());
     }
 
     public getExpressApp(): express.Application {
+        var cors = require('cors');
+        this.app.use(cors({ origin: 'http://localhost:8080' }));
         return this.app;
+
     }
 }

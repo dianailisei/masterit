@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import MentorService from '@/api-services/mentorService'
 export default {
   name: "Register",
   data() {
@@ -114,7 +115,8 @@ export default {
       showPwd1: false,
       showPwd2: false,
       showPwd3: false,
-      accountType: ["Mentor", "Student"]
+      accountType: ["Mentor", "Student"],
+      mentor: {}
     };
   },
   methods: {
@@ -133,6 +135,9 @@ export default {
       this.dark2 = !this.dark2;
       this.outline2 = !this.outline2;
       //   let questionsContainer = document.getElementById("net-questions");
+      MentorService.getById("5cee2cc87ec86210841fc39e").then(res =>
+        this.mentor = res.data
+      )
       if (this.dark2 == true) {
         //     questionsContainer.classList.remove("hidden");
         if (this.dark1 == true) this.toggleButton1();

@@ -1,6 +1,6 @@
 const devConfig = {
     app: {
-      port: parseInt(process.env.DEV_APP_PORT) || 4040
+      port: parseInt(process.env.DEV_APP_PORT) || 4041
     },
     db: {
       host: process.env.DEV_DB_HOST || 'localhost',
