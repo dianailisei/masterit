@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
+import * as morgan from "morgan";
 import { MentorController } from "./controllers/MentorController";
 import { StudentController } from "./controllers/StudentController";
 import { CourseController } from "./controllers/CourseController";
@@ -14,10 +15,8 @@ export class App {
 
     constructor(dbUrl?: string) {
         this.app = express();
-
         this.config();
         this.mongoConfig(dbUrl);
-
         this.routes();
     }
 
@@ -44,7 +43,9 @@ export class App {
     private config(): void {
         this.app.use(bodyParser.json({ type: 'application/json' }));
         this.app.use(bodyParser.urlencoded({ extended: false }));
-
+        var cors = require('cors');
+        this.app.use(cors({ origin: '*' }));
+        this.app.use(morgan('dev'));
         IocContainerConfig.configure();
     }
 
@@ -72,9 +73,6 @@ export class App {
     }
 
     public getExpressApp(): express.Application {
-        var cors = require('cors');
-        this.app.use(cors({ origin: 'http://localhost:8080' }));
         return this.app;
-
     }
 }

@@ -19,6 +19,10 @@ export class StudentRepository implements IStudentRepository {
         return this.StudentModel.findById(id).exec();
     }
 
+    public getByEmail(email: string): Promise<Student> {
+        return this.StudentModel.findOne({email}).exec();
+    }
+
     public add(document: Student): Promise<Student> {
         let newStudent = new this.StudentModel(document);
         return newStudent.save();

@@ -2,15 +2,18 @@ import { Request, Response, Router } from "express";
 import { Inject, Provides } from "typescript-ioc";
 import { IStudentRepository } from "../repository/IStudentRepository";
 import { Student } from "../models/Student";
-
+import * as jwt from 'jsonwebtoken';
+import * as express from "express";
 @Provides(StudentController)
 export class StudentController {
-    private router: Router;
+    private router;
 
     @Inject
     private studentRepository: IStudentRepository;
 
     private studentModel;
+
+    private middleware;
 
     private readonly HttpStatus_NoContent = 204;
 
@@ -22,16 +25,19 @@ export class StudentController {
 
     private readonly HttpStatus_Created = 201;
 
+    private readonly HttpStatus_Unauthorized = 401;
+
     constructor() {
-        this.router = Router();
-        this.init();
+        this.router = express.Router();
         this.studentModel = new Student().getModelForClass(Student);
+        this.middleware = require('../middleware/jwt');
+        this.init();
     }
 
     public getAll(req: Request, res: Response): void {
         this.studentRepository.getAll()
             .then(students => {
-                if(students.length == 0) {
+                if (students.length == 0) {
                     res.status(this.HttpStatus_NoContent).send();
                 } else {
                     res.status(this.HttpStatus_OK).json(students)
@@ -46,11 +52,30 @@ export class StudentController {
             .catch(() => res.status(this.HttpStatus_NotFound).send());
     }
 
+    public login(req: Request, res: Response): void {
+        this.studentRepository.getByEmail(req.body.email)
+            .then(student => {
+                if (student.password === req.body.password) {
+                    jwt.sign({ student }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                        if (err) { console.log(err) }
+                        res.status(this.HttpStatus_OK).json({ token, student });
+                    })
+                }
+                else {
+                    res.status(this.HttpStatus_Unauthorized).send();
+                }
+            })
+            .catch(() => res.status(this.HttpStatus_Unauthorized).send());
+    }
+
     public add(req: Request, res: Response): void {
         const newStudent = new this.studentModel(req.body);
-
         this.studentRepository.add(newStudent)
-            .then(student => res.status(this.HttpStatus_Created).json(student))
+            .then(student =>
+                jwt.sign({ student }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                    if (err) { console.log(err) }
+                    res.status(this.HttpStatus_Created).json({ token, student });
+                }))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
@@ -68,11 +93,12 @@ export class StudentController {
 
 
     private init(): any {
-        this.router.get('/', this.getAll.bind(this))
-            .get('/:id', this.getById.bind(this))
-            .post('/', this.add.bind(this))
-            .put('/:id', this.update.bind(this))
-            .delete('/:id', this.delete.bind(this));
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
+            .post('/login', this.login.bind(this))
+            .post('/register', this.add.bind(this))
+            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

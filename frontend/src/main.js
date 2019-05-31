@@ -6,7 +6,7 @@ import Axios from 'axios'
 
 Vue.config.productionTip = false
 
-const mentor = Axios.create({baseURL: 'localhost:4041'});
+const mentor = Axios.create({baseURL: 'http://localhost:8080'});
 window.Mentor = mentor;
 
 new Vue({

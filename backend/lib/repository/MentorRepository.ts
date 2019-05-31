@@ -1,6 +1,7 @@
 import { Mentor } from "../models/Mentor";
 import { Provides } from "typescript-ioc";
 import { IMentorRepository } from "./IMentorRepository";
+import { staticMethod, ModelType } from "typegoose";
 
 @Provides(IMentorRepository)
 export class MentorRepository implements IMentorRepository {
@@ -13,10 +14,14 @@ export class MentorRepository implements IMentorRepository {
 
     public getAll(): Promise<Mentor[]> {
         return this.MentorModel.find().exec();
-    }    
-    
+    }
+
     public getById(id: string): Promise<Mentor> {
         return this.MentorModel.findById(id).exec();
+    }
+
+    public getByEmail(email: string): Promise<Mentor> {
+        return this.MentorModel.findOne({email}).exec();
     }
 
     public add(document: Mentor): Promise<Mentor> {
