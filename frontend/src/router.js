@@ -17,6 +17,7 @@ export default new Router({
       children: [
         {
           path: 'dashboard',
+          name: "StudentDashboard",
           component: () => import('./components/Student/Dashboard.vue')
         },
         {
@@ -39,6 +40,7 @@ export default new Router({
       children: [
         {
           path: 'dashboard',
+          name: "MentorDashboard",
           component: () => import('./components/Mentor/Dashboard.vue')
         },
         {

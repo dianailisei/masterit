@@ -3,13 +3,17 @@ import './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import Axios from 'axios'
+import { store } from './store/store'
+import VueSwal from 'vue-swal'
 
+Vue.use(VueSwal)
 Vue.config.productionTip = false
 
-const mentor = Axios.create({baseURL: 'http://localhost:8080'});
-window.Mentor = mentor;
+const axios = Axios.create({baseURL: 'http://localhost:4041'});
+window.axios = axios;
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

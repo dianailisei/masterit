@@ -1,5 +1,5 @@
 <template>
-    <main>
+  <main>
     <h1 class="font-weight-thin mx-5 my-3 white--text">Dashboard</h1>
     <v-container class="my-5">
       <v-layout row wrap>
@@ -11,7 +11,6 @@
             <v-card-text>
               <p class="subheading font-weight-thin">3 days remaining of sprint no. 3</p>
             </v-card-text>
-            
           </v-card>
         </v-flex>
         <v-flex xs12 sm6 md3 lg3 class="px-4 pb-3">
@@ -29,9 +28,7 @@
             <v-card-title>
               <h2 class="font-weight-thin">Good Practices</h2>
             </v-card-title>
-            <v-card-text>
-              
-            </v-card-text>
+            <v-card-text></v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
@@ -41,10 +38,9 @@
 
 <script>
 export default {
-
-}
+  name: "StudentDashboard"
+};
 </script>
 
 <style>
-
 </style>

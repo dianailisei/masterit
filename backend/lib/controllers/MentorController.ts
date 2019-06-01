@@ -58,7 +58,7 @@ export class MentorController {
                 if (mentor.password === req.body.password) {
                     jwt.sign({ mentor }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
-                        res.status(this.HttpStatus_OK).json({ token, mentor });
+                        res.status(this.HttpStatus_OK).json({ token, mentor});
                     })
                 }
                 else {

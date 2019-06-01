@@ -1,7 +1,7 @@
 <template>
   <main>
     <v-container>
-      <v-layout align-center  row wrap>
+      <v-layout align-center row wrap>
         <v-flex xs12 sm12 md12 lg12>
           <v-layout align-center justify-space-around row fill-height>
             <v-btn
@@ -38,10 +38,29 @@
                       label="Account Type"
                       menu-props="offsetY"
                       clearable
+                      v-model="accountTypeRegister"
                     ></v-select>
-                    <v-text-field color="white" label="First Name" clearable required></v-text-field>
-                    <v-text-field color="white" label="Last Name" clearable required></v-text-field>
-                    <v-text-field color="white" label="Email" clearable required></v-text-field>
+                    <v-text-field
+                      color="white"
+                      label="First Name"
+                      clearable
+                      required
+                      v-model="registerUser.firstName"
+                    ></v-text-field>
+                    <v-text-field
+                      color="white"
+                      label="Last Name"
+                      clearable
+                      required
+                      v-model="registerUser.lastName"
+                    ></v-text-field>
+                    <v-text-field
+                      color="white"
+                      label="Email"
+                      clearable
+                      required
+                      v-model="registerUser.email"
+                    ></v-text-field>
                     <v-text-field
                       :append-icon="showPwd1 ? 'visibility' : 'visibility_off'"
                       :type="showPwd1 ? 'text' : 'password'"
@@ -51,6 +70,7 @@
                       color="white"
                       @click:append="showPwd1 = !showPwd1"
                       required
+                      v-model="registerUser.password"
                     ></v-text-field>
                     <v-text-field
                       :append-icon="showPwd2 ? 'visibility' : 'visibility_off'"
@@ -61,8 +81,9 @@
                       color="white"
                       @click:append="showPwd2 = !showPwd2"
                       required
+                      v-model="registerVerifyPwd"
                     ></v-text-field>
-                    <v-btn flat class="white--text">submit</v-btn>
+                    <v-btn flat class="white--text" @click="register">submit</v-btn>
                     <v-btn flat class="white--text" @click="clearInputs">clear</v-btn>
                   </v-form>
                 </v-flex>
@@ -77,7 +98,21 @@
               <v-layout align-center row wrap justify-center>
                 <v-flex xs12 sm12 md8 lg8>
                   <v-form class="white--text">
-                    <v-text-field color="white" label="Email" clearable required></v-text-field>
+                    <v-select
+                      color="white"
+                      :items="accountType"
+                      label="Account Type"
+                      menu-props="offsetY"
+                      clearable
+                      v-model="accountTypeLogin"
+                    ></v-select>
+                    <v-text-field
+                      color="white"
+                      label="Email"
+                      clearable
+                      required
+                      v-model="loginUser.email"
+                    ></v-text-field>
                     <v-text-field
                       :append-icon="showPwd3 ? 'visibility' : 'visibility_off'"
                       :type="showPwd3 ? 'text' : 'password'"
@@ -87,9 +122,10 @@
                       color="white"
                       @click:append="showPwd3 = !showPwd3"
                       required
+                      v-model="loginUser.password"
                     ></v-text-field>
 
-                    <v-btn flat class="white--text">log in</v-btn>
+                    <v-btn flat class="white--text" @click="login">log in</v-btn>
                     <v-btn flat class="white--text" @click="clearInputs">clear</v-btn>
                   </v-form>
                 </v-flex>
@@ -103,7 +139,10 @@
 </template>
 
 <script>
-import MentorService from '@/api-services/mentorService'
+import MentorService from "@/api-services/mentorService";
+import StudentService from "@/api-services/studentService";
+import Router from "@/router";
+
 export default {
   name: "Register",
   data() {
@@ -116,7 +155,11 @@ export default {
       showPwd2: false,
       showPwd3: false,
       accountType: ["Mentor", "Student"],
-      mentor: {}
+      accountTypeLogin: "",
+      accountTypeRegister: "",
+      loginUser: { email: "", password: "" },
+      registerUser: { firstName: "", lastName: "", email: "", password: "" },
+      registerVerifyPwd: ""
     };
   },
   methods: {
@@ -134,10 +177,7 @@ export default {
     toggleButton2() {
       this.dark2 = !this.dark2;
       this.outline2 = !this.outline2;
-      //   let questionsContainer = document.getElementById("net-questions");
-      MentorService.getById("5cee2cc87ec86210841fc39e").then(res =>
-        this.mentor = res.data
-      )
+
       if (this.dark2 == true) {
         //     questionsContainer.classList.remove("hidden");
         if (this.dark1 == true) this.toggleButton1();
@@ -150,6 +190,72 @@ export default {
       let inputs = document.getElementsByTagName("input");
       for (let i = 0; i < inputs.length; i++) {
         inputs[i].value = "";
+      }
+    },
+    login() {
+      if (this.accountTypeLogin === "Mentor") {
+        MentorService.login(this.loginUser)
+          .then(res => {
+            window.localStorage.setItem("token", res.data.token);
+            this.$store.dispatch("SET_USER", res.data.mentor);
+            Router.push({ name: "MentorDashboard" });
+          })
+          .catch(function(error) {
+            if (error.response) {
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            }
+          });
+      } else {
+        StudentService.login(this.loginUser)
+          .then(res => {
+            window.localStorage.setItem("token", res.data.token);
+            this.$store.dispatch("SET_USER", res.data.student);
+            Router.push({ name: "StudentDashboard" });
+          })
+          .catch(function(error) {
+            if (error.response) {
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            }
+          });
+      }
+    },
+    register() {
+      if (this.registerUser.password !== this.registerVerifyPwd) {
+        this.$swal("Warning!", "Passwords don't match!", "warning");
+      } else {
+        if (this.accountTypeRegister === "Mentor") {
+          MentorService.create(this.registerUser)
+            .then(res => {
+              window.localStorage.setItem("token", res.data.token);
+              this.$store.dispatch("SET_USER", res.data.mentor);
+              Router.push({ name: "MentorDashboard" });
+            })
+            .catch(function(error) {
+              if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+              }
+            });
+        } else {
+          StudentService.create(this.registerUser)
+            .then(res => {
+              window.localStorage.setItem("token", res.data.token);
+              this.$store.dispatch("SET_USER", res.data.student);
+              Router.push({ name: "StudentDashboard" });
+            })
+            .catch(function(error) {
+              if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+              }
+            });
+        }
       }
     }
   }
