@@ -54,11 +54,11 @@ export class MentorController {
 
     public login(req: Request, res: Response): void {
         this.mentorRepository.getByEmail(req.body.email)
-            .then(mentor => {
-                if (mentor.password === req.body.password) {
-                    jwt.sign({ mentor }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+            .then(user => {
+                if (user.password === req.body.password) {
+                    jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
-                        res.status(this.HttpStatus_OK).json({ token, mentor});
+                        res.status(this.HttpStatus_OK).json({ token, user });
                     })
                 }
                 else {
@@ -71,10 +71,10 @@ export class MentorController {
     public add(req: Request, res: Response): void {
         const newMentor = new this.mentorModel(req.body);
         this.mentorRepository.add(newMentor)
-            .then(mentor => {
-                jwt.sign({ mentor }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+            .then(user => {
+                jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
-                    res.status(this.HttpStatus_Created).json({ token, mentor });
+                    res.status(this.HttpStatus_Created).json({ token, user });
                 })
             })
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
@@ -94,11 +94,11 @@ export class MentorController {
 
     private init(): any {
         this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
-            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
             .post('/login', this.login.bind(this))
             .post('/register', this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.delete.bind(this));
+            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { Inject, Provides } from "typescript-ioc";
 import { IFeedbackRepository } from "../repository/IFeedbackRepository";
 import { Feedback } from "../models/Feedback";
-
+import * as express from "express";
 @Provides(FeedbackController)
 export class FeedbackController {
     private router: Router;
@@ -11,6 +11,8 @@ export class FeedbackController {
     private feedbackRepository: IFeedbackRepository;
 
     private feedbackModel;
+
+    private middleware;
 
     private readonly HttpStatus_NoContent = 204;
 
@@ -23,7 +25,8 @@ export class FeedbackController {
     private readonly HttpStatus_Created = 201;
 
     constructor() {
-        this.router = Router();
+        this.router = express.Router();
+        this.middleware = require('../middleware/jwt');
         this.init();
         this.feedbackModel = new Feedback().getModelForClass(Feedback);
     }
@@ -66,16 +69,15 @@ export class FeedbackController {
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
-
     private init(): any {
-        this.router.get('/', this.getAll.bind(this))
-            .get('/:id', this.getById.bind(this))
-            .post('/', this.add.bind(this))
-            .put('/:id', this.update.bind(this))
-            .delete('/:id', this.delete.bind(this));
+        this.router.get('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getAll.bind(this))
+            .get('/:id',this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
+            .post('/', this.middleware.checkAuth, this.middleware.authorizeStudent, this.add.bind(this))
+            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {
         return this.router;
-    }
+    } 
 }

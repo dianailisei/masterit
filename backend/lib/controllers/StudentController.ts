@@ -54,11 +54,11 @@ export class StudentController {
 
     public login(req: Request, res: Response): void {
         this.studentRepository.getByEmail(req.body.email)
-            .then(student => {
-                if (student.password === req.body.password) {
-                    jwt.sign({ student }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+            .then(user => {
+                if (user.password === req.body.password) {
+                    jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
-                        res.status(this.HttpStatus_OK).json({ token, student });
+                        res.status(this.HttpStatus_OK).json({ token, user });
                     })
                 }
                 else {
@@ -71,10 +71,10 @@ export class StudentController {
     public add(req: Request, res: Response): void {
         const newStudent = new this.studentModel(req.body);
         this.studentRepository.add(newStudent)
-            .then(student =>
-                jwt.sign({ student }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+            .then(user =>
+                jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
-                    res.status(this.HttpStatus_Created).json({ token, student });
+                    res.status(this.HttpStatus_Created).json({ token, user });
                 }))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
@@ -94,11 +94,11 @@ export class StudentController {
 
     private init(): any {
         this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
-            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.getById.bind(this))
             .post('/login', this.login.bind(this))
             .post('/register', this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.delete.bind(this));
+            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { Inject, Provides } from "typescript-ioc";
 import { IQuestionRepository } from "../repository/IQuestionRepository";
 import { Question } from "../models/Question";
-
+import * as express from "express";
 @Provides(QuestionController)
 export class QuestionController {
     private router: Router;
@@ -11,6 +11,8 @@ export class QuestionController {
     private questionRepository: IQuestionRepository;
 
     private questionModel;
+
+    private middleware;
 
     private readonly HttpStatus_NoContent = 204;
 
@@ -23,7 +25,8 @@ export class QuestionController {
     private readonly HttpStatus_Created = 201;
 
     constructor() {
-        this.router = Router();
+        this.router = express.Router();
+        this.middleware = require('../middleware/jwt');
         this.init();
         this.questionModel = new Question().getModelForClass(Question);
     }
@@ -31,7 +34,7 @@ export class QuestionController {
     public getAll(req: Request, res: Response): void {
         this.questionRepository.getAll()
             .then(questions => {
-                if(questions.length == 0) {
+                if (questions.length == 0) {
                     res.status(this.HttpStatus_NoContent).send();
                 } else {
                     res.status(this.HttpStatus_OK).json(questions)
@@ -68,11 +71,11 @@ export class QuestionController {
 
 
     private init(): any {
-        this.router.get('/', this.getAll.bind(this))
-            .get('/:id', this.getById.bind(this))
-            .post('/', this.add.bind(this))
-            .put('/:id', this.update.bind(this))
-            .delete('/:id', this.delete.bind(this));
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
+            .post('/', this.middleware.checkAuth,  this.middleware.authorizeMentor, this.add.bind(this))
+            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

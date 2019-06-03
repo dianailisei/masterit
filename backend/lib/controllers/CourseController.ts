@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { Inject, Provides } from "typescript-ioc";
 import { ICourseRepository } from "../repository/ICourseRepository";
 import { Course } from "../models/Course";
+import * as express from "express";
 
 @Provides(CourseController)
 export class CourseController {
@@ -11,6 +12,8 @@ export class CourseController {
     private courseRepository: ICourseRepository;
 
     private courseModel;
+
+    private middleware;
 
     private readonly HttpStatus_NoContent = 204;
 
@@ -23,7 +26,8 @@ export class CourseController {
     private readonly HttpStatus_Created = 201;
 
     constructor() {
-        this.router = Router();
+        this.router = express.Router();
+        this.middleware = require('../middleware/jwt');
         this.init();
         this.courseModel = new Course().getModelForClass(Course);
     }
@@ -31,7 +35,7 @@ export class CourseController {
     public getAll(req: Request, res: Response): void {
         this.courseRepository.getAll()
             .then(courses => {
-                if(courses.length == 0) {
+                if (courses.length == 0) {
                     res.status(this.HttpStatus_NoContent).send();
                 } else {
                     res.status(this.HttpStatus_OK).json(courses)
@@ -68,11 +72,11 @@ export class CourseController {
 
 
     private init(): any {
-        this.router.get('/', this.getAll.bind(this))
-            .get('/:id', this.getById.bind(this))
-            .post('/', this.add.bind(this))
-            .put('/:id', this.update.bind(this))
-            .delete('/:id', this.delete.bind(this));
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
+            .post('/', this.middleware.checkAuth, this.add.bind(this))
+            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

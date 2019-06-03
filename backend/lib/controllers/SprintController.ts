@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { Inject, Provides } from "typescript-ioc";
 import { ISprintRepository } from "../repository/ISprintRepository";
 import { Sprint } from "../models/Sprint";
-
+import * as express from "express";
 @Provides(SprintController)
 export class SprintController {
     private router: Router;
@@ -11,6 +11,8 @@ export class SprintController {
     private sprintRepository: ISprintRepository;
 
     private sprintModel;
+
+    private middleware;
 
     private readonly HttpStatus_NoContent = 204;
 
@@ -23,7 +25,8 @@ export class SprintController {
     private readonly HttpStatus_Created = 201;
 
     constructor() {
-        this.router = Router();
+        this.router = express.Router();
+        this.middleware = require('../middleware/jwt');
         this.init();
         this.sprintModel = new Sprint().getModelForClass(Sprint);
     }
@@ -68,11 +71,11 @@ export class SprintController {
 
 
     private init(): any {
-        this.router.get('/', this.getAll.bind(this))
-            .get('/:id', this.getById.bind(this))
-            .post('/', this.add.bind(this))
-            .put('/:id', this.update.bind(this))
-            .delete('/:id', this.delete.bind(this));
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id',this.middleware.checkAuth, this.getById.bind(this))
+            .post('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.add.bind(this))
+            .put('/:id',this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/:id',this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {
