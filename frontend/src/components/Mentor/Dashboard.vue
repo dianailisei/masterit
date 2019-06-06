@@ -9,10 +9,14 @@
               <h2 class="font-weight-thin">Sprint Stats</h2>
             </v-card-title>
             <v-card-text>
-              <p class="subheading font-weight-thin">3 days remaining of sprint no. 3</p>
+              <p
+                v-if="this.$store.getters.lastSprint !== undefined"
+                class="subheading font-weight-thin"
+              >{{this.$store.getters.getSprintRemainingDays}} days remaining of sprint no. {{this.$store.getters.lastSprint.number}}</p>
+              <p v-else class="subheading font-weight-thin">No sprint available</p>
             </v-card-text>
             <v-card-actions>
-              <v-btn flat class="white--text font-weight-light">Plan next sprint</v-btn>
+              <v-btn flat class="white--text font-weight-light" route to="sprints">Plan next sprint</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -33,14 +37,14 @@
             </v-card-title>
             <v-card-text>
               <v-list class="transparent">
-                <v-list-tile v-for="member in team" :key="member.name" route to="#" class="pa-1">
+                <v-list-tile v-for="member in this.$store.getters.team" :key="member.name" route to="#" class="pa-1">
                   <v-list-tile-action>
                     <v-avatar size="40" class="grey lighten-2">
                       <img :src="require('@/assets/logo.png')">
                     </v-avatar>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <h2 class="font-weight-thin white--text">{{member.name}}</h2>
+                    <h2 class="font-weight-thin white--text">{{member.firstName}} {{member.lastName}}</h2>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -53,30 +57,16 @@
 </template>
 
 <script>
+/* eslint-disable no-undef */
+/* eslint-disable vue/no-side-effects-in-computed-properties */
+// import MentorService from "@/api-services/mentorService";
 export default {
   name: "MentorDashboard",
   data() {
     return {
-      team: [
-        {
-          name: "Diana Ilisei",
-          avatar: "assets/logo.png",
-          position: "Backend Dev"
-        },
-        {
-          name: "Diana Ilisei2",
-          avatar: "assets/logo.png",
-          position: "Backend Dev"
-        },
-        {
-          name: "Diana Ilisei3",
-          avatar: "assets/logo.png",
-          position: "Backend Dev"
-        }
-      ]
+      lastSprint: {}
     };
-  },
-  methods: {}
+  }
 };
 </script>
 
@@ -89,7 +79,6 @@ export default {
 }
 .test {
   position: relative;
-
   z-index: 2;
 }
 </style>

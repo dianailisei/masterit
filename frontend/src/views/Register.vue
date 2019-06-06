@@ -37,27 +37,26 @@
                       :items="accountType"
                       label="Account Type"
                       menu-props="offsetY"
-                      clearable
                       v-model="accountTypeRegister"
                     ></v-select>
                     <v-text-field
                       color="white"
                       label="First Name"
-                      clearable
                       required
                       v-model="registerUser.firstName"
+                      :rules="[rules.required, rules.min]"
                     ></v-text-field>
                     <v-text-field
                       color="white"
                       label="Last Name"
-                      clearable
+                      :rules="[rules.required, rules.min]"
                       required
                       v-model="registerUser.lastName"
                     ></v-text-field>
                     <v-text-field
                       color="white"
                       label="Email"
-                      clearable
+                      :rules="[rules.required, rules.email]"
                       required
                       v-model="registerUser.email"
                     ></v-text-field>
@@ -81,6 +80,7 @@
                       color="white"
                       @click:append="showPwd2 = !showPwd2"
                       required
+                      :rules="[rules.verifyPassword]"
                       v-model="registerVerifyPwd"
                     ></v-text-field>
                     <v-btn flat class="white--text" @click="register">submit</v-btn>
@@ -139,6 +139,7 @@
 </template>
 
 <script>
+/* eslint-disable no-undef */
 import MentorService from "@/api-services/mentorService";
 import StudentService from "@/api-services/studentService";
 import Router from "@/router";
@@ -158,20 +159,29 @@ export default {
       accountTypeLogin: "",
       accountTypeRegister: "",
       loginUser: { email: "", password: "" },
-      registerUser: { firstName: "", lastName: "", email: "", password: "" },
-      registerVerifyPwd: ""
+      registerUser: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        team: []
+      },
+      registerVerifyPwd: "",
+      rules: {
+        required: value => !!value || "Required",
+        min: v => v.length >= 3 || "Min 3 characters",
+        email: v => /.+@.+/.test(v) || "Invalid Email address",
+        verifyPassword: value =>
+          value === this.registerUser.password || "Passwords don't match"
+      }
     };
   },
   methods: {
     toggleButton1() {
       this.dark1 = !this.dark1;
       this.outline1 = !this.outline1;
-      //   let questionsContainer = document.getElementById("java-questions");
       if (this.dark1 == true) {
-        //     questionsContainer.classList.remove("hidden");
         if (this.dark2 == true) this.toggleButton2();
-        //   } else {
-        //     questionsContainer.classList.add("hidden");
       }
     },
     toggleButton2() {
@@ -179,11 +189,7 @@ export default {
       this.outline2 = !this.outline2;
 
       if (this.dark2 == true) {
-        //     questionsContainer.classList.remove("hidden");
         if (this.dark1 == true) this.toggleButton1();
-
-        //   } else {
-        //     questionsContainer.classList.add("hidden");
       }
     },
     clearInputs() {
@@ -196,11 +202,21 @@ export default {
       if (this.accountTypeLogin === "Mentor") {
         MentorService.login(this.loginUser)
           .then(res => {
-            window.localStorage.setItem("token", res.data.token);
-            this.$store.dispatch("SET_USER", res.data.mentor);
-            Router.push({ name: "MentorDashboard" });
+            window.localStorage.setItem("token", res.data);
+            this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
+            this.$store.dispatch("SET_TEAM", {team: utils.decodeToken(res.data).user.team, token: res.data});
+            if (this.loginUser.email === "admin") {
+              Router.push({ name: "Admin" });
+            } else {
+              Router.push({ name: "MentorDashboard" });
+            }
           })
-          .catch(function(error) {
+          .catch(error => {
+            this.$swal(
+              "Warning!",
+              "Oops! An error occured. Please try again!",
+              "warning"
+            ).then(Router.push({ name: "Register" }));
             if (error.response) {
               console.log(error.response.data);
               console.log(error.response.status);
@@ -210,11 +226,16 @@ export default {
       } else {
         StudentService.login(this.loginUser)
           .then(res => {
-            window.localStorage.setItem("token", res.data.token);
-            this.$store.dispatch("SET_USER", res.data.student);
+            window.localStorage.setItem("token", res.data);
+            this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
             Router.push({ name: "StudentDashboard" });
           })
-          .catch(function(error) {
+          .catch(error => {
+            this.$swal(
+              "Warning!",
+              "Oops! An error occured. Please try again!",
+              "warning"
+            ).then(Router.push({ name: "Register" }));
             if (error.response) {
               console.log(error.response.data);
               console.log(error.response.status);
@@ -230,11 +251,17 @@ export default {
         if (this.accountTypeRegister === "Mentor") {
           MentorService.create(this.registerUser)
             .then(res => {
-              window.localStorage.setItem("token", res.data.token);
-              this.$store.dispatch("SET_USER", res.data.mentor);
+              window.localStorage.setItem("token", res.data);
+              this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
+              this.$store.dispatch("SET_TEAM", {team: utils.decodeToken(res.data).user.team, token:  res.data});
               Router.push({ name: "MentorDashboard" });
             })
-            .catch(function(error) {
+            .catch(error => {
+              this.$swal(
+                "Warning!",
+                "Oops! An error occured. Please try again!",
+                "warning"
+              ).then(Router.push({ name: "Register" }));
               if (error.response) {
                 console.log(error.response.data);
                 console.log(error.response.status);
@@ -244,11 +271,17 @@ export default {
         } else {
           StudentService.create(this.registerUser)
             .then(res => {
-              window.localStorage.setItem("token", res.data.token);
-              this.$store.dispatch("SET_USER", res.data.student);
+              window.localStorage.setItem("token", res.data);
+              this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
               Router.push({ name: "StudentDashboard" });
             })
-            .catch(function(error) {
+            .catch(error => {
+              this.$swal(
+                "Warning!",
+                "Oops! An error occured. Please try again!",
+                "warning"
+              ).then(Router.push({ name: "Register" }));
+
               if (error.response) {
                 console.log(error.response.data);
                 console.log(error.response.status);

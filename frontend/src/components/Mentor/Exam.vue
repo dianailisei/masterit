@@ -6,52 +6,29 @@
         <v-flex xs12 sm12 md12 lg12>
           <v-layout align-center justify-space-around row fill-height>
             <v-btn
+              v-for="course in courses"
+              :key="course._id"
               color="navbarColor"
               fab
               large
-              :dark="dark1"
-              :outline="outline1"
-              @click="toggleButton1"
-            >Java</v-btn>
-            <v-btn
-              color="navbarColor"
-              fab
-              large
-              :dark="dark2"
-              :outline="outline2"
-              @click="toggleButton2"
-            >.NET</v-btn>
-
-            <v-btn
-              color="navbarColor"
-              fab
-              large
-              :dark="dark3"
-              :outline="outline3"
-              @click="toggleButton3"
-            >Testing</v-btn>
-            <v-btn
-              color="navbarColor"
-              fab
-              large
-              :dark="dark4"
-              :outline="outline4"
-              @click="toggleButton4"
-            >Dev Ops</v-btn>
+              :dark="course.dark"
+              :outline="course.outline"
+              @click="toggleButton(course)"
+            >{{course.name}}</v-btn>
           </v-layout>
         </v-flex>
         <v-flex xs12 sm10 md8 lg8 align-center offset-md2 offset-lg2 class="py-5">
-          <v-card color="white" class="rounded-corners" v-if="dark1">
+          <v-card color="white" class="rounded-corners" v-show="showQuestions">
             <v-card-title>
-              <h2 class="font-weight-light pb-1 pl-2">Java Questions</h2>
+              <h2 class="font-weight-light pb-1 pl-2">Questions</h2>
             </v-card-title>
             <v-card-text>
-              <template v-if="javaQuestions.length !== 0">
-                <v-container v-for="question in javaQuestions" :key="question.question">
+              <template v-if="courseQuestions.length !== 0">
+                <v-container v-for="question in courseQuestions" :key="question._id">
                   <h3 class="font-weight-light">{{question.question}}</h3>
                   <br>
                   <v-layout align-center justify-center column fill-height>
-                    <code v-if="question.snippet">{{question.snippetContent}}</code>
+                    <code v-if="question.snippetContent !== ''">{{question.snippetContent}}</code>
                   </v-layout>
                   <v-layout wrap>
                     <v-flex xs10 sm10 md10 lg10>
@@ -65,7 +42,13 @@
                     </v-flex>
                     <v-flex xs2 sm2 md2 lg2>
                       <v-layout align-end justify-end row fill-height>
-                        <v-btn color="cardColor" outline fab @click="editedQuestion = question">
+                        <v-btn
+                          color="cardColor"
+                          outline
+                          fab
+                          route
+                          :to="{name: 'Question', params: { id: question._id }}"
+                        >
                           <v-icon>edit</v-icon>
                         </v-btn>
                       </v-layout>
@@ -81,179 +64,11 @@
             </v-card-text>
             <v-card-actions>
               <v-layout align-center justify-end row fill-height class="pa-3">
-                <v-btn color="orange" outline fab>
+                <v-btn color="navbarColor" outline fab route to="question">
                   <v-icon>add_circle</v-icon>
                 </v-btn>
-                <v-btn color="red" outline fab>
+                <v-btn color="red" outline fab @click="deleteAllQuestions(selectedCourse)">
                   <v-icon>delete</v-icon>
-                </v-btn>
-                <v-btn color="navbarColor" outline fab>
-                  <v-icon>save</v-icon>
-                </v-btn>
-                <v-btn color="cardColor" outline fab>
-                  <v-icon>send</v-icon>
-                </v-btn>
-              </v-layout>
-            </v-card-actions>
-          </v-card>
-          <v-card color="white" class="rounded-corners" v-if="dark2">
-            <v-card-title>
-              <h2 class="font-weight-light pb-1 pl-2">.NET Questions</h2>
-            </v-card-title>
-            <v-card-text>
-              <template v-if="netQuestions.length !== 0">
-                <v-container v-for="question in netQuestions" :key="question.question">
-                  <h3 class="font-weight-light">{{question.question}}</h3>
-                  <br>
-                  <v-layout align-center justify-center column fill-height>
-                    <code v-if="question.snippet">{{question.snippetContent}}</code>
-                  </v-layout>
-                  <v-layout wrap>
-                    <v-flex xs10 sm10 md10 lg10>
-                      <v-checkbox
-                        v-for="answer in question.answers"
-                        :key="answer"
-                        :label="answer"
-                        color="navbarColor"
-                        hide-details
-                      ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs2 sm2 md2 lg2>
-                      <v-layout align-end justify-end row fill-height>
-                        <v-btn color="cardColor" outline fab>
-                          <v-icon>edit</v-icon>
-                        </v-btn>
-                      </v-layout>
-                    </v-flex>
-                  </v-layout>
-                  <br>
-                  <v-divider></v-divider>
-                </v-container>
-              </template>
-              <template v-else>
-                <h3 class="font-weight-light pl-4">No questions added yet. 😪</h3>
-              </template>
-            </v-card-text>
-            <v-card-actions>
-              <v-layout align-center justify-end row fill-height class="pa-3">
-                <v-btn color="orange" outline fab>
-                  <v-icon>add_circle</v-icon>
-                </v-btn>
-                <v-btn color="red" outline fab>
-                  <v-icon>delete</v-icon>
-                </v-btn>
-                <v-btn color="navbarColor" outline fab>
-                  <v-icon>save</v-icon>
-                </v-btn>
-                <v-btn color="cardColor" outline fab>
-                  <v-icon>send</v-icon>
-                </v-btn>
-              </v-layout>
-            </v-card-actions>
-          </v-card>
-          <v-card color="white" class="rounded-corners" v-if="dark3">
-            <v-card-title>
-              <h2 class="font-weight-light pb-1 pl-2">Testing Questions</h2>
-            </v-card-title>
-            <v-card-text>
-              <template v-if="testingQuestions.length !== 0">
-                <v-container v-for="question in testingQuestions" :key="question.question">
-                  <h3 class="font-weight-light">{{question.question}}</h3>
-                  <br>
-                  <v-layout align-center justify-center column fill-height>
-                    <code v-if="question.snippet">{{question.snippetContent}}</code>
-                  </v-layout>
-                  <v-layout wrap>
-                    <v-flex xs10 sm10 md10 lg10>
-                      <v-checkbox
-                        v-for="answer in question.answers"
-                        :key="answer"
-                        :label="answer"
-                        color="navbarColor"
-                        hide-details
-                      ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs2 sm2 md2 lg2>
-                      <v-layout align-end justify-end row fill-height>
-                        <v-btn color="cardColor" outline fab>
-                          <v-icon>edit</v-icon>
-                        </v-btn>
-                      </v-layout>
-                    </v-flex>
-                  </v-layout>
-                  <br>
-                  <v-divider></v-divider>
-                </v-container>
-              </template>
-              <template v-else>
-                <h3 class="font-weight-light pl-4">No questions added yet. 😪</h3>
-              </template>
-            </v-card-text>
-            <v-card-actions>
-              <v-layout align-center justify-end row fill-height class="pa-3">
-                <v-btn color="orange" outline fab>
-                  <v-icon>add_circle</v-icon>
-                </v-btn>
-                <v-btn color="red" outline fab>
-                  <v-icon>delete</v-icon>
-                </v-btn>
-                <v-btn color="navbarColor" outline fab>
-                  <v-icon>save</v-icon>
-                </v-btn>
-                <v-btn color="cardColor" outline fab>
-                  <v-icon>send</v-icon>
-                </v-btn>
-              </v-layout>
-            </v-card-actions>
-          </v-card>
-          <v-card color="white" class="rounded-corners" v-if="dark4">
-            <v-card-title>
-              <h2 class="font-weight-light pb-1 pl-2">Dev Ops Questions</h2>
-            </v-card-title>
-            <v-card-text>
-              <template v-if="devQuestions.length !== 0">
-                <v-container v-for="question in devQuestions" :key="question.question">
-                  <h3 class="font-weight-light">{{question.question}}</h3>
-                  <br>
-                  <v-layout align-center justify-center column fill-height>
-                    <code v-if="question.snippet">{{question.snippetContent}}</code>
-                  </v-layout>
-                  <v-layout wrap>
-                    <v-flex xs10 sm10 md10 lg10>
-                      <v-checkbox
-                        v-for="answer in question.answers"
-                        :key="answer"
-                        :label="answer"
-                        color="navbarColor"
-                        hide-details
-                      ></v-checkbox>
-                    </v-flex>
-                    <v-flex xs2 sm2 md2 lg2>
-                      <v-layout align-end justify-end row fill-height>
-                        <v-btn color="cardColor" outline fab>
-                          <v-icon>edit</v-icon>
-                        </v-btn>
-                      </v-layout>
-                    </v-flex>
-                  </v-layout>
-                  <br>
-                  <v-divider></v-divider>
-                </v-container>
-              </template>
-              <template v-else>
-                <h3 class="font-weight-light pl-4">No questions added yet. 😪</h3>
-              </template>
-            </v-card-text>
-            <v-card-actions>
-              <v-layout align-center justify-end row fill-height class="pa-3">
-                <v-btn color="orange" outline fab>
-                  <v-icon>add_circle</v-icon>
-                </v-btn>
-                <v-btn color="red" outline fab>
-                  <v-icon>delete</v-icon>
-                </v-btn>
-                <v-btn color="navbarColor" outline fab>
-                  <v-icon>save</v-icon>
                 </v-btn>
                 <v-btn color="cardColor" outline fab>
                   <v-icon>send</v-icon>
@@ -268,86 +83,69 @@
 </template>
 
 <script>
+import CourseService from "@/api-services/CourseService";
+import QuestionService from "@/api-services/QuestionService";
+// import Router from "@/router";
 export default {
   name: "Exam",
   data() {
     return {
-      dark1: false,
-      outline1: true,
-      dark2: false,
-      outline2: true,
-      dark3: false,
-      outline3: true,
-      dark4: false,
-      outline4: true,
-      javaQuestions: [
-        {
-          question:
-            "1. The default value of a static integer variable of a class in Java is:",
-          answers: ["0", "1", "Garbage value", "Null", "-1"],
-          snippet: false,
-          snippetContent: "",
-          correctAnswers: ["0"]
-        },
-        {
-          question:
-            "2. What will be printed as the output of the following program?",
-          answers: ["I = 0", "I = 1", "I = 2", "I = 3", "Compile-time Error"],
-          snippet: true,
-          snippetContent: `
-public class testincr
-{
-  public static void main(String args[])
-  {
-    int i = 0;
-    i = i++ + i;
-    System.out.println(“I = ” +i);
-  }
-}`,
-          correctAnswers: ["I=1"]
-        }
-      ],
-      netQuestions: [],
-      testingQuestions: [],
-      devQuestions: []
+      courses: [],
+      allQuestions: [],
+      showQuestions: false,
+      selectedCourse: ""
     };
   },
+  created() {
+    CourseService.getAll(localStorage.getItem("token"))
+      .then(res => {
+        this.courses = res.data.map(c => {
+          c.dark = false;
+          c.outline = true;
+          return c;
+        });
+        this.courses.forEach(c => {
+          QuestionService.getByCourseId(c._id, localStorage.getItem("token"))
+            .then(response => this.allQuestions.push(...response.data))
+            .catch(err => console.log(err));
+        });
+      })
+      .catch(err => console.log(err));
+  },
+  computed: {
+    courseQuestions() {
+      let questions = [];
+      this.allQuestions.forEach(q => {
+        if (q.courseId === this.selectedCourse._id) {
+          questions.push(q);
+        }
+      });
+      return questions;
+    }
+  },
   methods: {
-    toggleButton1() {
-      this.dark1 = !this.dark1;
-      this.outline1 = !this.outline1;
-      if (this.dark1 == true) {
-        if (this.dark2 == true) this.toggleButton2();
-        if (this.dark3 == true) this.toggleButton3();
-        if (this.dark4 == true) this.toggleButton4();
+    toggleButton(course) {
+      this.courses.forEach(c => {
+        c.dark = false;
+        c.outline = true;
+        this.showQuestions = false;
+      });
+      course.dark = !course.dark;
+      course.outline = !course.outline;
+      if (course.dark === true) {
+        this.showQuestions = true;
+        this.selectedCourse = course;
       }
     },
-    toggleButton2() {
-      this.dark2 = !this.dark2;
-      this.outline2 = !this.outline2;
-      if (this.dark2 == true) {
-        if (this.dark1 == true) this.toggleButton1();
-        if (this.dark3 == true) this.toggleButton3();
-        if (this.dark4 == true) this.toggleButton4();
-      }
-    },
-    toggleButton3() {
-      this.dark3 = !this.dark3;
-      this.outline3 = !this.outline3;
-      if (this.dark3 == true) {
-        if (this.dark1 == true) this.toggleButton1();
-        if (this.dark2 == true) this.toggleButton2();
-        if (this.dark4 == true) this.toggleButton4();
-      }
-    },
-    toggleButton4() {
-      this.dark4 = !this.dark4;
-      this.outline4 = !this.outline4;
-      if (this.dark4 == true) {
-        if (this.dark1 == true) this.toggleButton1();
-        if (this.dark3 == true) this.toggleButton3();
-        if (this.dark2 == true) this.toggleButton2();
-      }
+    deleteAllQuestions(course) {
+      QuestionService.deleteByCourseId(
+        course._id,
+        localStorage.getItem("token")
+      )
+        .then(() => {
+          this.$swal("Success!", "", "success");
+        })
+        .catch(err => console.log(err));
     }
   }
 };

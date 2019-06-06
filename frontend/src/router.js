@@ -9,6 +9,7 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: "Register",
       component: () => import('./views/Register.vue')
     },
     {
@@ -45,6 +46,7 @@ export default new Router({
         },
         {
           path: 'team',
+          name: "Team",
           component: () => import('./components/Mentor/Team.vue')
         },
         {
@@ -53,14 +55,17 @@ export default new Router({
         },
         {
           path: 'sprints',
+          name: "SprintSettings",
           component: () => import('./components/Mentor/SprintSettings.vue')
         },
         {
           path: 'exam',
+          name: "Exam",
           component: () => import('./components/Mentor/Exam.vue')
         },
         {
-          path: 'question',
+          path: 'question/:id?',
+          name: 'Question',
           component: () => import('./components/Mentor/Question.vue')
         },
         {
@@ -72,6 +77,11 @@ export default new Router({
           component: () => import('./components/Mentor/Test.vue')
         }
       ]
+    },
+    {
+      path: '/admin',
+      name: "Admin",
+      component: () => import('./views/Admin.vue')
     }
   ]
 })

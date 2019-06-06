@@ -47,6 +47,7 @@ export class StudentController {
     }
 
     public getById(req: Request, res: Response): void {
+        // console.log(req.body)
         this.studentRepository.getById(req.params.id)
             .then(student => res.status(this.HttpStatus_OK).json(student))
             .catch(() => res.status(this.HttpStatus_NotFound).send());
@@ -58,7 +59,7 @@ export class StudentController {
                 if (user.password === req.body.password) {
                     jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
-                        res.status(this.HttpStatus_OK).json({ token, user });
+                        res.status(this.HttpStatus_OK).json(token);
                     })
                 }
                 else {
@@ -74,31 +75,31 @@ export class StudentController {
             .then(user =>
                 jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
-                    res.status(this.HttpStatus_Created).json({ token, user });
+                    res.status(this.HttpStatus_Created).json(token);
                 }))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
     public update(req: Request, res: Response): void {
-        this.studentRepository.update(req.params.id, req.body)
+        this.studentRepository.update(res.locals.tokenData.user._id, req.body)
             .then(updatedStudent => res.status(this.HttpStatus_OK).json(updatedStudent))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
     public delete(req: Request, res: Response): void {
-        this.studentRepository.delete(req.params.id)
+        this.studentRepository.delete(res.locals.tokenData.user._id)
             .then(() => res.status(this.HttpStatus_NoContent).send())
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
 
     private init(): any {
-        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
-            .get('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.getById.bind(this))
+        this.router.get('/all', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
             .post('/login', this.login.bind(this))
             .post('/register', this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.delete.bind(this));
+            .put('/update', this.middleware.checkAuth, this.middleware.authorizeStudent, this.update.bind(this))
+            .delete('/', this.middleware.checkAuth, this.middleware.authorizeStudent, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

@@ -49,9 +49,14 @@ export class QuestionController {
             .catch(() => res.status(this.HttpStatus_NotFound).send());
     }
 
+    public getByCourseId(req: Request, res: Response): void {
+        this.questionRepository.getByCourseId(req.params.id)
+            .then(question => res.status(this.HttpStatus_OK).json(question))
+            .catch(() => res.status(this.HttpStatus_NotFound).send());
+    }
+
     public add(req: Request, res: Response): void {
         const newQuestion = new this.questionModel(req.body);
-
         this.questionRepository.add(newQuestion)
             .then(question => res.status(this.HttpStatus_Created).json(question))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
@@ -69,13 +74,20 @@ export class QuestionController {
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
+    public deleteByCourseId(req: Request, res: Response): void {
+        this.questionRepository.deleteByCourseId(req.params.id)
+            .then(() => res.status(this.HttpStatus_NoContent).send())
+            .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
+    }
 
     private init(): any {
-        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+        this.router.get('/all', this.middleware.checkAuth, this.getAll.bind(this))
             .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
-            .post('/', this.middleware.checkAuth,  this.middleware.authorizeMentor, this.add.bind(this))
+            .get('/course/:id', this.middleware.checkAuth, this.getByCourseId.bind(this))
+            .post('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.add.bind(this))
             .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this))
+            .delete('/course/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.deleteByCourseId.bind(this));
     }
 
     public getRoutes(): Router {

@@ -1,4 +1,5 @@
 import { prop, Typegoose, Ref } from 'typegoose';
+import { Mentor } from './Mentor';
 
 export class Sprint extends Typegoose {
     @prop({required: true})
@@ -7,17 +8,23 @@ export class Sprint extends Typegoose {
     @prop({required: true})
     pointsGiven: string;
 
+    @prop({required: true, ref: Mentor})
+    mentorId: Ref<Mentor>;
+
     @prop()
     pointsAccomplished: string;
-
-    @prop({ required: true })
-    noOfDays: string;
 
     @prop()
     startDate: Date;
 
     @prop()
     endDate: Date;
+
+    @prop()
+    endedEarlier: Boolean;
+
+    @prop()
+    ended: Boolean;
     
     @prop({default: Date.now})
     creationDate: Date;

@@ -14,8 +14,14 @@ export class Mentor extends Typegoose {
     @prop({ required: true })
     password: string;
 
-    @prop({ ref: Student})
-    team: Ref<Student>[];
+    @prop()
+    team: [];
+
+    @prop({required: true})
+    approved: Boolean;
+
+    @prop({required: true})
+    role: String;
 
     @prop({ default: Date.now })
     creationDate: Date;

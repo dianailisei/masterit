@@ -72,9 +72,9 @@ export class CourseController {
 
 
     private init(): any {
-        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+        this.router.get('/all', this.middleware.checkAuth, this.getAll.bind(this))
             .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
-            .post('/', this.middleware.checkAuth, this.add.bind(this))
+            .post('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.add.bind(this))
             .put('/:id', this.middleware.checkAuth, this.update.bind(this))
             .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }

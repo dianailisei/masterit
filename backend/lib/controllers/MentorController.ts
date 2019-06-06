@@ -35,19 +35,25 @@ export class MentorController {
     }
 
     public getAll(req: Request, res: Response): void {
-        this.mentorRepository.getAll()
-            .then(mentors => {
-                if (mentors.length == 0) {
-                    res.status(this.HttpStatus_NoContent).send();
-                } else {
-                    res.status(this.HttpStatus_OK).json(mentors)
-                }
-            })
-            .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
+        if (res.locals.tokenData.user.email === "admin") {
+            this.mentorRepository.getAll()
+                .then(mentors => {
+                    if (mentors.length == 0) {
+                        res.status(this.HttpStatus_NoContent).send();
+                    } else {
+                        res.status(this.HttpStatus_OK).json(mentors)
+                    }
+                })
+                .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
+        }
+        else {
+            res.status(this.HttpStatus_Unauthorized).send()
+        }
+
     }
 
     public getById(req: Request, res: Response): void {
-        this.mentorRepository.getById(req.params.id)
+        this.mentorRepository.getById(res.locals.tokenData.user._id)
             .then(mentor => res.status(this.HttpStatus_OK).json(mentor))
             .catch(() => res.status(this.HttpStatus_NotFound).send());
     }
@@ -55,10 +61,10 @@ export class MentorController {
     public login(req: Request, res: Response): void {
         this.mentorRepository.getByEmail(req.body.email)
             .then(user => {
-                if (user.password === req.body.password) {
+                if (user.password === req.body.password && user.approved === true) {
                     jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
-                        res.status(this.HttpStatus_OK).json({ token, user });
+                        res.status(this.HttpStatus_OK).json(token);
                     })
                 }
                 else {
@@ -74,14 +80,14 @@ export class MentorController {
             .then(user => {
                 jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
-                    res.status(this.HttpStatus_Created).json({ token, user });
+                    res.status(this.HttpStatus_Created).json(token);
                 })
             })
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
     public update(req: Request, res: Response): void {
-        this.mentorRepository.update(req.params.id, req.body)
+        this.mentorRepository.update(req.body.id, req.body)
             .then(updatedMentor => res.status(this.HttpStatus_OK).json(updatedMentor))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
@@ -93,12 +99,12 @@ export class MentorController {
     }
 
     private init(): any {
-        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
-            .get('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
+        this.router.get('/all', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
             .post('/login', this.login.bind(this))
             .post('/register', this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
+            .put('/update', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

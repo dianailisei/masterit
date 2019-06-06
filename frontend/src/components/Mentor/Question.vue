@@ -8,7 +8,17 @@
             <h2 class="font-weight-thin pb-1"></h2>
             <v-card-text>
               <v-form>
-                <v-text-field v-model="question.question" label="Question" color="white"></v-text-field>
+                <v-select
+                  :items="courses"
+                  label="Course"
+                  color="white"
+                  menu-props="offsetY"
+                  v-model="question.courseId"
+                  item-text="name"
+                  item-value="_id"
+                  required
+                ></v-select>
+                <v-text-field v-model="question.question" label="Question" color="white" required></v-text-field>
                 <v-combobox
                   multiple
                   v-model="question.answers"
@@ -19,6 +29,7 @@
                   :search-input.sync="search"
                   @keyup.tab="updateTags"
                   color="white"
+                  required
                 ></v-combobox>
                 <v-combobox
                   multiple
@@ -29,12 +40,13 @@
                   deletable-chips
                   :search-input.sync="search"
                   @keyup.tab="updateTags"
+                  required
                   color="white"
                 ></v-combobox>
                 <v-switch color="indigo darken-3" v-model="snippet" label="Snippet"></v-switch>
-                <v-textarea v-if="snippet" color="white"></v-textarea>
+                <v-textarea v-if="snippet" color="white" v-model="question.snippetContent"></v-textarea>
                 <v-layout align-center justify-end row fill-height class="pa-3">
-                  <v-btn color="white" dark outline fab>
+                  <v-btn color="white" dark outline fab @click="addQuestion">
                     <v-icon>save</v-icon>
                   </v-btn>
                 </v-layout>
@@ -48,35 +60,32 @@
 </template>
 
 <script>
+import CourseService from "@/api-services/CourseService";
+import QuestionService from "@/api-services/QuestionService";
+import Router from "@/router";
 export default {
   name: "Question",
   data() {
     return {
       snippet: false,
       question: {
-        question:
-          "2. What will be printed as the output of the following program?",
-        answers: ["I = 0", "I = 1", "I = 2", "I = 3", "Compile-time Error"],
+        question: "",
+        answers: [],
         snippet: true,
-        snippetContent: `
-public class testincr
-{
-  public static void main(String args[])
-  {
-    int i = 0;
-    i = i++ + i;
-    System.out.println(“I = ” +i);
-  }
-}`,
-        correctAnswers: ["I=1"]
+        snippetContent: ``,
+        correctAnswers: [],
+        courseId: ""
       },
+      courses: ["JAVA", ".NET", "Testing", "DevOps"],
       search: ""
     };
   },
   methods: {
     updateTags() {
       this.$nextTick(() => {
-        this.question.answers.push(...this.search.split(","));
+        if (this.search != "" || this.search !== null) {
+          this.question.answers.push(...this.search.split(","));
+        }
         this.$nextTick(() => {
           this.search = "";
         });
@@ -89,8 +98,59 @@ public class testincr
         snippetContainer.classList.remove("hidden");
       } else {
         snippetContainer.classList.add("hidden");
+        this.question.snippetContent = "";
       }
+    },
+    addQuestion() {
+      if (this.$route.params.id) {
+        QuestionService.update(
+          this.$route.params.id,
+          this.question,
+          localStorage.getItem("token")
+        )
+          .then(() => {
+            this.clearQuestion();
+            this.$swal("Success!", "", "success").then(Router.push({name: 'Exam'}));
+          })
+          .catch(err => console.log(err));
+      } else {
+        QuestionService.create(this.question, localStorage.getItem("token"))
+          .then(() => {
+            this.clearQuestion();
+            this.$swal("Success!", "", "success");
+          })
+          .catch(err => console.log(err));
+      }
+    },
+    clearQuestion() {
+      this.question = {
+        question: "",
+        answers: [],
+        snippet: true,
+        snippetContent: ``,
+        correctAnswers: [],
+        courseId: ""
+      };
     }
+  },
+  created() {
+    if (this.$route.params.id) {
+      QuestionService.getById(
+        this.$route.params.id,
+        localStorage.getItem("token")
+      )
+        .then(res => {
+          console.log(res.data);
+          this.question = res.data;
+        })
+        .catch(err => console.log(err));
+    }
+    this.courses = [];
+    CourseService.getAll(localStorage.getItem("token"))
+      .then(res => {
+        this.courses = res.data;
+      })
+      .catch(err => console.log(err));
   }
 };
 </script>

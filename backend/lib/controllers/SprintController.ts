@@ -31,13 +31,25 @@ export class SprintController {
         this.sprintModel = new Sprint().getModelForClass(Sprint);
     }
 
-    public getAll(req: Request, res: Response): void {
-        this.sprintRepository.getAll()
+    public getAllByMentor(req: Request, res: Response): void {
+        this.sprintRepository.getAllByMentor(res.locals.tokenData.user._id)
             .then(sprints => {
-                if(sprints.length == 0) {
+                if (sprints.length === 0) {
                     res.status(this.HttpStatus_NoContent).send();
                 } else {
                     res.status(this.HttpStatus_OK).json(sprints)
+                }
+            })
+            .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
+    }
+
+    public getLastSprint(req: Request, res: Response): void {
+        this.sprintRepository.getLastSprint(res.locals.tokenData.user._id)
+            .then(sprint => {
+                if (sprint.length === 0) {
+                    res.status(this.HttpStatus_NoContent).send();
+                } else {
+                    res.status(this.HttpStatus_OK).json(sprint)
                 }
             })
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
@@ -51,7 +63,7 @@ export class SprintController {
 
     public add(req: Request, res: Response): void {
         const newSprint = new this.sprintModel(req.body);
-
+        newSprint.mentorId = res.locals.tokenData.user._id;
         this.sprintRepository.add(newSprint)
             .then(sprint => res.status(this.HttpStatus_Created).json(sprint))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
@@ -69,13 +81,13 @@ export class SprintController {
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
 
-
     private init(): any {
-        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
-            .get('/:id',this.middleware.checkAuth, this.getById.bind(this))
+        this.router.get('/all', this.middleware.checkAuth, this.getAllByMentor.bind(this))
+            .get('/last', this.middleware.checkAuth, this.getLastSprint.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
             .post('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.add.bind(this))
-            .put('/:id',this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
-            .delete('/:id',this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
+            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

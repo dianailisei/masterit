@@ -3,7 +3,7 @@ import { Course } from './Course';
 
 export class Question extends Typegoose {
     @prop({required: true})
-    text: string;
+    question: string;
 
     @prop({required: true})
     answers: string[];
@@ -12,7 +12,10 @@ export class Question extends Typegoose {
     correctAnswers: string[];
 
     @prop()
-    snnipet: string;
+    snnipet: Boolean;
+
+    @prop()
+    snippetContent: string;
 
     @prop({required: true, ref: Course})
     courseId: Ref<Course>;

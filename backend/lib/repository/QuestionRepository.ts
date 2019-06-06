@@ -4,6 +4,13 @@ import { IQuestionRepository } from "./IQuestionRepository";
 
 @Provides(IQuestionRepository)
 export class QuestionRepository implements IQuestionRepository {
+    deleteByCourseId(id: string): Promise<Question> {
+        return this.QuestionModel.find({courseId: id}).remove().exec();
+    }
+
+    getByCourseId(id: string): Promise<Question[]> {
+        return this.QuestionModel.find({courseId: id}).exec();
+    }
     
     private QuestionModel;
 

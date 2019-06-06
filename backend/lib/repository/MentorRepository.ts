@@ -36,5 +36,4 @@ export class MentorRepository implements IMentorRepository {
     public delete(id: string): Promise<Mentor> {
         return this.MentorModel.findByIdAndRemove(id).exec();
     }
-
 }
