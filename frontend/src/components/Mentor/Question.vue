@@ -46,7 +46,10 @@
                 <v-switch color="indigo darken-3" v-model="snippet" label="Snippet"></v-switch>
                 <v-textarea v-if="snippet" color="white" v-model="question.snippetContent"></v-textarea>
                 <v-layout align-center justify-end row fill-height class="pa-3">
-                  <v-btn color="white" dark outline fab @click="addQuestion">
+                  <v-btn color="white" outline fab @click="deleteQuestion" :disabled="!isInDb">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                  <v-btn color="white" outline fab @click="addQuestion">
                     <v-icon>save</v-icon>
                   </v-btn>
                 </v-layout>
@@ -80,6 +83,15 @@ export default {
       search: ""
     };
   },
+  computed: {
+    isInDb() {
+      if (this.$route.params.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
   methods: {
     updateTags() {
       this.$nextTick(() => {
@@ -102,7 +114,7 @@ export default {
       }
     },
     addQuestion() {
-      if (this.$route.params.id) {
+      if (this.isInDb) {
         QuestionService.update(
           this.$route.params.id,
           this.question,
@@ -110,7 +122,9 @@ export default {
         )
           .then(() => {
             this.clearQuestion();
-            this.$swal("Success!", "", "success").then(Router.push({name: 'Exam'}));
+            this.$swal("Success!", "", "success").then(
+              Router.push({ name: "Exam" })
+            );
           })
           .catch(err => console.log(err));
       } else {
@@ -121,6 +135,15 @@ export default {
           })
           .catch(err => console.log(err));
       }
+    },
+    deleteQuestion() {
+      QuestionService.delete(this.question._id, localStorage.getItem("token"))
+        .then(() => {
+          this.$swal("Success!", "", "success").then(
+            Router.push({ name: "Exam" })
+          );
+        })
+        .catch(err => console.log(err));
     },
     clearQuestion() {
       this.question = {
@@ -140,7 +163,7 @@ export default {
         localStorage.getItem("token")
       )
         .then(res => {
-          console.log(res.data);
+          // console.log(res.data);
           this.question = res.data;
         })
         .catch(err => console.log(err));

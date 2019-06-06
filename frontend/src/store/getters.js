@@ -1,6 +1,7 @@
 const user = state => state.user;
 const lastSprint = state => state.lastSprint;
 const team = state => state.team;
+const questions = state => state.questions;
 const getSprintRemainingDays = state => {
     let diffDays = 0, diffTime;
     if (state.lastSprint !== undefined) {
@@ -22,5 +23,6 @@ export default {
     user,
     lastSprint,
     getSprintRemainingDays,
-    team
+    team,
+    questions
 };

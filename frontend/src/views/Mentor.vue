@@ -46,18 +46,14 @@ export default {
           token: localStorage.getItem("token")
         });
         this.$store.dispatch("SET_LAST_SPRINT", localStorage.getItem("token"));
+        this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
       })
-      .catch(error => {
+      .catch(() => {
         this.$swal(
           "Warning!",
           "Oops! An error occured. Please try again!",
           "warning"
         ).then(Router.push({ name: "Register" }));
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
       });
   }
 };

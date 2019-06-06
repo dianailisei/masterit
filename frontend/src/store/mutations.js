@@ -11,6 +11,7 @@ const getDefaultState = () => {
 const SET_USER = (state, payload) => state.user = payload;
 const SET_LAST_SPRINT = (state, payload) => state.lastSprint = payload;
 const SET_TEAM = (state, payload) => state.team = payload;
+const SET_QUESTIONS = (state, payload) => state.questions = payload;
 const ADD_MEMBER = (state, payload) => {
   if (state.team === undefined) {
     state.team = Array();
@@ -23,5 +24,5 @@ const ADD_MEMBER = (state, payload) => {
 }
 const RESET_STATE = (state) => Object.assign(state, getDefaultState())
 export default {
-  SET_USER, SET_LAST_SPRINT, RESET_STATE, SET_TEAM, ADD_MEMBER
+  SET_USER, SET_LAST_SPRINT, RESET_STATE, SET_TEAM, ADD_MEMBER, SET_QUESTIONS
 };

@@ -11,7 +11,8 @@ export const store = new Vuex.Store({
   state: {
     user: {},
     lastSprint: {},
-    team: []
+    team: [],
+    questions: []
   },
   actions,
   getters,

@@ -91,12 +91,12 @@ export default {
   data() {
     return {
       courses: [],
-      allQuestions: [],
       showQuestions: false,
       selectedCourse: ""
     };
   },
   created() {
+    this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
     CourseService.getAll(localStorage.getItem("token"))
       .then(res => {
         this.courses = res.data.map(c => {
@@ -104,22 +104,24 @@ export default {
           c.outline = true;
           return c;
         });
-        this.courses.forEach(c => {
-          QuestionService.getByCourseId(c._id, localStorage.getItem("token"))
-            .then(response => this.allQuestions.push(...response.data))
-            .catch(err => console.log(err));
-        });
       })
       .catch(err => console.log(err));
   },
   computed: {
     courseQuestions() {
+      let storeQuestions = this.$store.getters.questions;
       let questions = [];
-      this.allQuestions.forEach(q => {
-        if (q.courseId === this.selectedCourse._id) {
-          questions.push(q);
-        }
-      });
+      if (
+        storeQuestions !== "" &&
+        storeQuestions !== undefined &&
+        storeQuestions !== null
+      ) {
+        storeQuestions.forEach(q => {
+          if (q.courseId === this.selectedCourse._id) {
+            questions.push(q);
+          }
+        });
+      }
       return questions;
     }
   },
@@ -143,6 +145,7 @@ export default {
         localStorage.getItem("token")
       )
         .then(() => {
+          this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
           this.$swal("Success!", "", "success");
         })
         .catch(err => console.log(err));
