@@ -1,5 +1,7 @@
 import { prop, Typegoose, Ref, ModelType } from 'typegoose';
 import { Student } from './Student';
+import { parentPort } from 'worker_threads';
+import { StringifyOptions } from 'querystring';
 
 export class Mentor extends Typegoose {
 
@@ -28,6 +30,9 @@ export class Mentor extends Typegoose {
 
     @prop({required: true})
     role: String;
+
+    @prop()
+    profilePicture: String;
 
     @prop({ default: Date.now })
     creationDate: Date;

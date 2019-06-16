@@ -79,6 +79,7 @@ export class App {
     }
 
     public getExpressApp(): express.Application {
+        this.app.use('/uploads', express.static('uploads'));
         return this.app;
     }
 }

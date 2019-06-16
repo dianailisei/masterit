@@ -17,6 +17,8 @@ export class StudentController {
 
     private middleware;
 
+    private upload;
+
     private readonly HttpStatus_NoContent = 204;
 
     private readonly HttpStatus_OK = 200;
@@ -31,9 +33,35 @@ export class StudentController {
 
     constructor() {
         this.router = express.Router();
+        this.configFileUpload();
         this.studentModel = new Student().getModelForClass(Student);
         this.middleware = require('../middleware/jwt');
         this.init();
+    }
+
+    private configFileUpload() {
+        const multer = require('multer');
+
+        const storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+                cb(null, './uploads/')
+            },
+            filename: function (req, file, cb) {
+                cb(null, Date.now() + file.originalname);
+            }
+        });
+        const fileFilter = (req, file, cb) => {
+            if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg'){
+                cb(null, true)
+            } else {
+                cb(null, false)
+            }
+        }
+        this.upload = multer({
+            storage: storage, limits: {
+                fileSize: 1024 * 1024 * 5, fileFilter: fileFilter
+            }
+        });
     }
 
     public getAll(req: Request, res: Response): void {
@@ -90,7 +118,14 @@ export class StudentController {
     }
 
     public update(req: Request, res: Response): void {
-        this.studentRepository.update(req.params.id, req.body)
+        var updatedStudent = req.body;
+        if (req.file) {
+            updatedStudent.profilePicture = 'http://localhost:'+process.env.DEV_APP_PORT+"/"+req.file.path
+        }
+        if (req.body.password) {
+            updatedStudent.password = bcrypt.hashSync(req.body.password, 10)
+        }
+        this.studentRepository.update(req.params.id, updatedStudent)
             .then(updatedStudent => res.status(this.HttpStatus_OK).json(updatedStudent))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
@@ -107,7 +142,7 @@ export class StudentController {
             .get('/mentor/:id', this.middleware.checkAuth, this.getByMentor.bind(this))
             .post('/login', this.login.bind(this))
             .post('/register', this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
+            .put('/:id', this.middleware.checkAuth, this.upload.single('profilePicture'), this.update.bind(this))
             .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeStudent, this.delete.bind(this));
     }
 

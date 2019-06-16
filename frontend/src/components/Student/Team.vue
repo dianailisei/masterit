@@ -7,7 +7,8 @@
           <v-card class="text-xs-center ma-3 rounded-corners">
             <v-responsive class="pt-4">
               <v-avatar size="100" class="grey lighten-2">
-                <img :src="require('@/assets/logo.png')" alt="avatar">
+                <img :src="member.profilePicture" alt="profilePic" v-if="member.profilePicture">
+                <img :src="require('@/assets/profile.png')" alt="avatar" v-else>
               </v-avatar>
             </v-responsive>
             <v-card-text>

@@ -24,7 +24,8 @@
           <v-list class="pa-0">
             <v-list-tile avatar>
               <v-list-tile-avatar>
-                <img src="@/assets/logo.png">
+                <img v-if="$store.getters.user.profilePicture" :src="$store.getters.user.profilePicture">
+                <img v-else src="@/assets/profile.png">
               </v-list-tile-avatar>
 
               <v-list-tile-content>

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout align-center row wrap>
-      <v-flex xs12 sm12 md8 lg8>
+      <v-flex xs12 sm12 md8 lg8 offset-md2 offset-lg2>
         <v-card color="navbarColor" class="rounded-corners white--text">
           <v-card-title>
             <h1 class="font-weight-thin pb-1 pl-2">Edit profile info</h1>
@@ -9,7 +9,24 @@
           <v-card-text>
             <v-layout align-center row wrap justify-center>
               <v-flex xs12 sm12 md8 lg8>
+                <v-avatar v-if="pictureURL" size="130">
+                  <img :src="pictureURL" height="150">
+                </v-avatar>
                 <v-form class="white--text">
+                  <v-text-field
+                    label="Select Profile Picture"
+                    @click="selectImg"
+                    v-model="pictureName"
+                    prepend-icon="attach_file"
+                    color="white"
+                  ></v-text-field>
+                  <input
+                    type="file"
+                    style="display: none"
+                    ref="image"
+                    accept="image/*"
+                    @change="onImgSelected"
+                  >
                   <v-text-field
                     color="white"
                     label="First Name"
@@ -75,18 +92,27 @@ export default {
         min: v => v.length >= 3 || "Min 3 characters",
         verifyPassword: value =>
           value === this.password || "Passwords don't match"
-      }
+      },
+      pictureName: "",
+      pictureURL: "",
+      pictureFile: null
     };
   },
   methods: {
     update() {
-      let updatedMentor = {
-        firstName: this.firstName,
-        lastName: this.lastName
-      };
-
+      let updatedMentor = new FormData();
+      if (this.pictureFile !== null) {
+        updatedMentor.append(
+          "profilePicture",
+          this.pictureFile,
+          this.pictureName
+        );
+      }
+      updatedMentor.append('firstName', this.firstName);
+      updatedMentor.append('lastName', this.lastName);
+      
       if (this.password !== "" && this.updateInfoVerifyPwd !== "") {
-        updatedMentor.password = this.password;
+        updatedMentor.append('password', this.password);
       }
       MentorService.update(
         this.$store.getters.user._id,
@@ -97,13 +123,37 @@ export default {
           user: { id: res.data._id, role: res.data.role },
           token: localStorage.getItem("token")
         });
-        this.$swal("Success!", "", "success").then(Router.push({ name: "MentorDashboard" }));
+        this.$swal("Success!", "", "success").then(
+          Router.push({ name: "MentorDashboard" })
+        );
       });
     },
     clearInputs() {
       let inputs = document.getElementsByTagName("input");
       for (let i = 0; i < inputs.length; i++) {
         inputs[i].value = "";
+      }
+    },
+    selectImg() {
+      this.$refs.image.click();
+    },
+    onImgSelected(e) {
+      const files = e.target.files;
+      if (files[0] !== undefined) {
+        this.pictureName = files[0].name;
+        if (this.pictureName.lastIndexOf(".") <= 0) {
+          return;
+        }
+        const fr = new FileReader();
+        fr.readAsDataURL(files[0]);
+        fr.addEventListener("load", () => {
+          this.pictureURL = fr.result;
+          this.pictureFile = files[0]; // this is an picture file that can be sent to server...
+        });
+      } else {
+        this.pictureName = "";
+        this.pictureFile = null;
+        this.pictureURL = "";
       }
     }
   }

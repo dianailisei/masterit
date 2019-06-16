@@ -39,8 +39,9 @@
               <v-list class="transparent">
                 <v-list-tile v-for="member in this.$store.getters.team" :key="member.name" route to="#" class="pa-1">
                   <v-list-tile-action>
-                    <v-avatar size="40" class="grey lighten-2">
-                      <img :src="require('@/assets/logo.png')">
+                    <v-avatar size="50" class="grey lighten-2">
+                      <img :src="member.profilePicture" v-if="member.profilePicture">
+                      <img :src="require('@/assets/profile.png')" v-else>
                     </v-avatar>
                   </v-list-tile-action>
                   <v-list-tile-content>

@@ -7,12 +7,16 @@
           <v-card class="text-xs-center ma-3 rounded-corners">
             <v-responsive class="pt-4">
               <v-avatar size="100" class="grey lighten-2">
-                <img :src="require('@/assets/logo.png')" alt="avatar">
+                <img :src="member.profilePicture" v-if="member.profilePicture">
+                <img :src="require('@/assets/profile.png')" v-else>
               </v-avatar>
             </v-responsive>
             <v-card-text>
               <div class="subheading pb-3">{{member.firstName}} {{member.lastName}}</div>
-              <p v-if="member.courseId" class="grey--text">{{$store.getters.courses[member.courseId]}}</p>
+              <p
+                v-if="member.courseId"
+                class="grey--text"
+              >{{$store.getters.courses[member.courseId]}}</p>
               <p v-else class="grey--text">Not Updated</p>
             </v-card-text>
             <v-card-actions>
@@ -37,12 +41,16 @@
           <v-card class="text-xs-center ma-3 rounded-corners">
             <v-responsive class="pt-4">
               <v-avatar size="100" class="grey lighten-2">
-                <img :src="require('@/assets/logo.png')" alt="avatar">
+                <img :src="member.profilePicture" v-if="member.profilePicture">
+                <img :src="require('@/assets/profile.png')" v-else>
               </v-avatar>
             </v-responsive>
             <v-card-text>
               <div class="subheading pb-3">{{member.firstName}} {{member.lastName}}</div>
-              <p v-if="member.courseId" class="grey--text">{{$store.getters.courses[member.courseId]}}</p>
+              <p
+                v-if="member.courseId"
+                class="grey--text"
+              >{{$store.getters.courses[member.courseId]}}</p>
               <p v-else class="grey--text">Not Updated</p>
             </v-card-text>
             <v-card-actions>

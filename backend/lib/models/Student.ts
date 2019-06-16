@@ -35,6 +35,9 @@ export class Student extends Typegoose {
 
     @prop()
     score: string;
+
+    @prop()
+    profilePicture: string;
     
     @prop({default: Date.now})
     creationDate: Date;

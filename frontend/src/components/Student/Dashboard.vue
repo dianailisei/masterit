@@ -32,8 +32,8 @@
             <v-card-title>
               <h2 class="font-weight-thin">Good Practices</h2>
             </v-card-title>
-            <v-card-text>
-              <v-data-iterator
+            <v-card-text v-if="$store.getters.goodPractices && $store.getters.goodPractices.rules">
+              <v-data-iterator 
                 :items="$store.getters.goodPractices.rules"
                 :rows-per-page-items="rowsPerPageItems"
                 :pagination.sync="pagination"
@@ -51,6 +51,9 @@
                 </template>
               </v-data-iterator>
             </v-card-text>
+            <v-card-text><p
+        class="subheading font-weight-thin white--text pl-5"
+      >No good practice rules added yet. 😪</p></v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
