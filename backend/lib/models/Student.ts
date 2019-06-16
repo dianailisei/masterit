@@ -1,8 +1,14 @@
-import { prop, Typegoose, Ref } from 'typegoose';
+import { prop, Typegoose, Ref, ModelType } from 'typegoose';
 import { Mentor } from './Mentor';
 import { Course } from './Course';
 
 export class Student extends Typegoose {
+
+    @prop()
+    get id( this: InstanceType<ModelType<Student>>): Promise<Student[]> {
+        return this._id
+    }
+
     @prop({required: true})
     firstName: string;
 
@@ -20,6 +26,15 @@ export class Student extends Typegoose {
 
     @prop({ ref: Course})
     courseId: Ref<Course>;
+    
+    @prop({required:true})
+    role: string;
+
+    @prop({required:true})
+    submittedExam: Boolean;
+
+    @prop()
+    score: string;
     
     @prop({default: Date.now})
     creationDate: Date;

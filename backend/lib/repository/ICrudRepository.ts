@@ -11,3 +11,4 @@ export abstract class ICrudRepository<T extends Typegoose> {
     
     abstract delete(id: String): Promise<T>;
 }
+

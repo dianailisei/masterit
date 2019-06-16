@@ -12,7 +12,8 @@ const utils = {
                 .join("")
         );
         return JSON.parse(base64);
-    }
+    },
+    
 }
 
 export default utils 

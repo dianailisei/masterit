@@ -6,7 +6,7 @@ export default {
     getAll(token) {
         return axios({
             method: 'get',
-            url: `${RESOURCE_NAME}/all`,
+            url: `${RESOURCE_NAME}`,
             headers: { Authorization: `Bearer ${token}` }
         });
     },

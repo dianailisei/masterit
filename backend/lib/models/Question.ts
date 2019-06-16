@@ -1,7 +1,12 @@
-import { prop, Typegoose, Ref } from 'typegoose';
+import { prop, Typegoose, Ref, ModelType } from 'typegoose';
 import { Course } from './Course';
 
 export class Question extends Typegoose {
+
+    @prop()
+    get id( this: InstanceType<ModelType<Question>>): Promise<Question[]> {
+        return this._id
+    }
     @prop({required: true})
     question: string;
 
@@ -19,6 +24,9 @@ export class Question extends Typegoose {
 
     @prop({required: true, ref: Course})
     courseId: Ref<Course>;
+
+    @prop({required: true})
+    visible: Boolean
 
     @prop({default: Date.now})
     creationDate: Date;

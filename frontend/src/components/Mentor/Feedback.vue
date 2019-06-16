@@ -14,7 +14,7 @@
                 <v-text-field color="white" clearable v-model="secondQuestion"></v-text-field>
                 <v-text-field color="white" clearable v-model="thirdQuestion"></v-text-field>
                 <v-layout justify-end row fill-height class="pt-4">
-                  <v-btn color="white" dark outline fab>
+                  <v-btn color="white" dark outline fab @click="sendFeedback">
                     <v-icon>send</v-icon>
                   </v-btn>
                 </v-layout>
@@ -46,9 +46,28 @@
                   </p>
                 </template>
               </v-data-iterator>
-              <v-btn color="white" dark outline fab>
-                <v-icon>add</v-icon>
-              </v-btn>
+              <v-dialog v-model="dialogBox" width="500">
+                <template v-slot:activator="{ on }">
+                  <v-btn color="white" dark outline fab @click="dialogBox= true">
+                    <v-icon>add</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-card>
+                  <v-card-title class="headline grey lighten-2" primary-title>Add new rule</v-card-title>
+
+                  <v-card-text>
+                    <v-text-field label="New rule" v-model="newRule" color="navbarColor"></v-text-field>
+                  </v-card-text>
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="error" flat @click="dialogBox = false; newRule=''">Cancel</v-btn>
+                    <v-btn color="navbarColor" flat @click="addNewRule()">Add</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -60,20 +79,25 @@
             </v-card-title>
             <v-card-text>
               <v-expansion-panel>
-                <v-expansion-panel-content v-for="i in numberOfSprints" :key="i">
+                <v-expansion-panel-content v-for="sprint in sprints" :key="sprint.id">
                   <template v-slot:header>
-                    <div>Sprint {{i}}</div>
+                    <div>Sprint {{sprint.number}}</div>
                   </template>
-                  <v-card v-for="result in results" :key="result.name">
-                    <v-card-title v-if="result.sprint == i">
-                      <h3 class="font-weight-light">{{result.name}}</h3>
-                    </v-card-title>
-                    <v-card-text v-if="result.sprint == i">
-                      <p
-                        v-for="question in result.response"
-                        :key="question"
-                        class="pl-3"
-                      >{{question}}</p>
+                  <v-card v-for="result in $store.getters.feedbackTests" :key="result._id">
+                    <v-card-text v-if="result.sprintId == sprint.id">
+                      <i v-for="question in result.questions" :key="question" class="pl-3">
+                        {{question}}
+                        <br>
+                      </i>
+                      <br>
+                      <v-divider></v-divider>
+                      <br>
+                      <div v-for="set in result.results" :key="set[0]">
+                        <p v-for="a in set" :key="a">{{a}}</p>
+                        <br>
+                        <v-divider></v-divider>
+                        <br>
+                      </div>
                     </v-card-text>
                     <v-divider></v-divider>
                   </v-card>
@@ -88,6 +112,9 @@
 </template>
 
 <script>
+import FeedbackService from "@/api-services/FeedbackService";
+import SprintService from "@/api-services/sprintService";
+import GoodPracticeService from "@/api-services/GoodPracticeService";
 export default {
   name: "Feedback",
   data() {
@@ -95,52 +122,78 @@ export default {
       firstQuestion: "What went well?",
       secondQuestion: "What didn’t go so well?",
       thirdQuestion: "How can we improve our work?",
-      goodPractices: [
-        "Use === Instead of == ",
-        "Reduce Globals",
-        "Comment your code",
-        "Use === Instead of == ",
-        "Reduce Globals",
-        "Comment your code",
-        "Use === Instead of == ",
-        "Reduce Globals",
-        "Comment your code"
-      ],
+      sprints: [],
       rowsPerPageItems: [3, 6, 9],
       pagination: {
         rowsPerPage: 6
       },
-      numberOfSprints: 3,
-      results: [
-        {
-          name: "Anonymous",
-          sprint: "2",
-          response: [
-            "What went well? - blah blah blah",
-            "What didn’t go so well? - blah blah blah",
-            "How can we improve our work? - blah blah blah"
-          ]
-        },
-        {
-          name: "Tom",
-          sprint: "2",
-          response: [
-            "What went well? - blah blah blah",
-            "What didn’t go so well? - blah blah blah",
-            "How can we improve our work? - blah blah blah"
-          ]
-        },
-        {
-          name: "Alice",
-          sprint: "1",
-          response: [
-            "What went well? - blah blah blah",
-            "What didn’t go so well? - blah blah blah",
-            "How can we improve our work? - - blah blah blah"
-          ]
-        }
-      ]
+      goodPractices: [],
+      dialogBox: false,
+      newRule: ""
     };
+  },
+  created() {
+    SprintService.getAllByMentor(
+      this.$store.getters.user._id,
+      localStorage.getItem("token")
+    ).then(res => {
+      // console.log(res.data)
+      res.data.forEach(s => this.sprints.push({ id: s._id, number: s.number }));
+    });
+    this.$store.getters.goodPractices.rules.forEach(g => {
+      this.goodPractices.push(g);
+    });
+  },
+  methods: {
+    sendFeedback() {
+      if (this.$store.getters.lastSprint === undefined) {
+        this.$swal("Warning!", "You must start a sprint!", "warning");
+      } else {
+        let feedbackTest = {
+          sprintId: this.$store.getters.lastSprint._id,
+          mentorId: this.$store.getters.user._id,
+          questions: [
+            this.firstQuestion,
+            this.secondQuestion,
+            this.thirdQuestion
+          ],
+          results: []
+        };
+        FeedbackService.create(
+          feedbackTest,
+          localStorage.getItem("token")
+        ).then(res => {
+          console.log(res.data);
+          this.$store.dispatch("SET_LAST_FEEDBACK", {
+            id: this.$store.getters.user._id,
+            token: localStorage.getItem("token")
+          });
+          this.$swal("Success!", "", "success");
+        });
+      }
+    },
+    addNewRule() {
+      console.log(
+        this.newRule,
+        this.$store.getters.user._id,
+        this.$store.getters.goodPractices
+      );
+      this.goodPractices.push(this.newRule);
+      GoodPracticeService.update(
+        this.$store.getters.goodPractices._id,
+        { rules: this.goodPractices },
+        localStorage.getItem("token")
+      ).then(res => {
+        console.log(res);
+        this.$store.dispatch("SET_GOOD_PRACTICES", {
+          id: this.$store.getters.user._id,
+          token: localStorage.getItem("token")
+        });
+        this.newRule = "";
+        this.dialogBox = false;
+        this.$swal("Success!", "", "success");
+      });
+    }
   }
 };
 </script>

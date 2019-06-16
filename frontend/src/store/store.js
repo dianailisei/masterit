@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
-
+import createPersistedState from 'vuex-persistedstate'
 import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';
@@ -12,9 +12,13 @@ export const store = new Vuex.Store({
     user: {},
     lastSprint: {},
     team: [],
-    questions: []
+    questions: [],
+    goodPractices: [],
+    feedbackTests:[],
+    lastFeedbackTest: {}
   },
   actions,
   getters,
   mutations,
+  plugins: [createPersistedState()]
 });

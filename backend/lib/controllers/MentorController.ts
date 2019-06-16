@@ -49,11 +49,10 @@ export class MentorController {
         else {
             res.status(this.HttpStatus_Unauthorized).send()
         }
-
     }
 
     public getById(req: Request, res: Response): void {
-        this.mentorRepository.getById(res.locals.tokenData.user._id)
+        this.mentorRepository.getById(req.params.id)
             .then(mentor => res.status(this.HttpStatus_OK).json(mentor))
             .catch(() => res.status(this.HttpStatus_NotFound).send());
     }
@@ -62,7 +61,7 @@ export class MentorController {
         this.mentorRepository.getByEmail(req.body.email)
             .then(user => {
                 if (user.password === req.body.password && user.approved === true) {
-                    jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                    jwt.sign( {user:{ id: user.id, role: user.role, email: user.email }}, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
                         res.status(this.HttpStatus_OK).json(token);
                     })
@@ -78,7 +77,7 @@ export class MentorController {
         const newMentor = new this.mentorModel(req.body);
         this.mentorRepository.add(newMentor)
             .then(user => {
-                jwt.sign({ user }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                jwt.sign({user:{ id: user.id, role: user.role, email: user.email }}, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
                     res.status(this.HttpStatus_Created).json(token);
                 })
@@ -87,7 +86,7 @@ export class MentorController {
     }
 
     public update(req: Request, res: Response): void {
-        this.mentorRepository.update(req.body.id, req.body)
+        this.mentorRepository.update(req.params.id, req.body)
             .then(updatedMentor => res.status(this.HttpStatus_OK).json(updatedMentor))
             .catch(err => res.status(this.HttpStatus_BadRequest).send(err));
     }
@@ -99,12 +98,12 @@ export class MentorController {
     }
 
     private init(): any {
-        this.router.get('/all', this.middleware.checkAuth, this.getAll.bind(this))
-            .get('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
             .post('/login', this.login.bind(this))
             .post('/register', this.add.bind(this))
-            .put('/update', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
-            .delete('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
+            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
     }
 
     public getRoutes(): Router {

@@ -4,6 +4,9 @@ import { IStudentRepository } from "./IStudentRepository";
 
 @Provides(IStudentRepository)
 export class StudentRepository implements IStudentRepository {
+    public getByMentor(id: string): Promise<Student[]> {
+        return this.StudentModel.find({mentorId: id}).exec();
+    }
     
     private StudentModel;
 

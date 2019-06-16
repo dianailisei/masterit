@@ -32,6 +32,10 @@ export default new Router({
         {
           path: 'feedback',
           component: () => import('./components/Student/Feedback.vue')
+        },
+        {
+          path: 'settings',
+          component: () => import('./components/Student/Settings.vue')
         }
       ]
     },
@@ -75,6 +79,10 @@ export default new Router({
         {
           path: 'test',
           component: () => import('./components/Mentor/Test.vue')
+        },
+        {
+          path: 'settings',
+          component: () => import('./components/Mentor/Settings.vue')
         }
       ]
     },

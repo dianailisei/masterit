@@ -8,6 +8,7 @@ import { CourseController } from "./controllers/CourseController";
 import { SprintController } from "./controllers/SprintController";
 import { QuestionController } from "./controllers/QuestionController";
 import { FeedbackController } from "./controllers/FeedbackController";
+import { GoodPracticeController } from "./controllers/GoodPracticeController";
 import { config, IocContainerConfig } from "./config";
 import { Inject } from "typescript-ioc";
 
@@ -40,6 +41,9 @@ export class App {
     @Inject
     private feedbackController: FeedbackController;
 
+    @Inject
+    private goodPracticeController:GoodPracticeController;
+
     private config(): void {
         this.app.use(bodyParser.json({ type: 'application/json' }));
         this.app.use(bodyParser.urlencoded({ extended: false }));
@@ -70,6 +74,7 @@ export class App {
         this.app.use('/api/v1/sprint', this.sprintController.getRoutes());
         this.app.use('/api/v1/question', this.questionController.getRoutes());
         this.app.use('/api/v1/feedback', this.feedbackController.getRoutes());
+        this.app.use('/api/v1/goodPractice', this.goodPracticeController.getRoutes())
     }
 
     public getExpressApp(): express.Application {

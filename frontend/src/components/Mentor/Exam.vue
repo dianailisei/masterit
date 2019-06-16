@@ -67,10 +67,22 @@
                 <v-btn color="navbarColor" outline fab route to="question">
                   <v-icon>add_circle</v-icon>
                 </v-btn>
-                <v-btn color="red" outline fab @click="deleteAllQuestions(selectedCourse)">
+                <v-btn
+                  color="red"
+                  outline
+                  fab
+                  @click="deleteAllQuestions(selectedCourse)"
+                  :disabled="isDisabled"
+                >
                   <v-icon>delete</v-icon>
                 </v-btn>
-                <v-btn color="cardColor" outline fab>
+                <v-btn
+                  color="cardColor"
+                  outline
+                  fab
+                  @click="sendExamQuestions()"
+                  :disabled="isDisabled"
+                >
                   <v-icon>send</v-icon>
                 </v-btn>
               </v-layout>
@@ -96,7 +108,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
+    // this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
     CourseService.getAll(localStorage.getItem("token"))
       .then(res => {
         this.courses = res.data.map(c => {
@@ -123,6 +135,10 @@ export default {
         });
       }
       return questions;
+    },
+    isDisabled() {
+      if (this.courseQuestions.length === 0) return true;
+      else return false;
     }
   },
   methods: {
@@ -149,6 +165,15 @@ export default {
           this.$swal("Success!", "", "success");
         })
         .catch(err => console.log(err));
+    },
+    sendExamQuestions() {
+      console.log(this.courseQuestions);
+      this.courseQuestions.forEach(q => {
+        q.visible = true;
+        QuestionService.update(q._id, q, localStorage.getItem("token")).then(
+          () => this.$swal("Success!", "", "success")
+        );
+      });
     }
   }
 };

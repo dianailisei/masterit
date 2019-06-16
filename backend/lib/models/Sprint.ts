@@ -1,18 +1,24 @@
-import { prop, Typegoose, Ref } from 'typegoose';
+import { prop, Typegoose, Ref, ModelType } from 'typegoose';
 import { Mentor } from './Mentor';
 
 export class Sprint extends Typegoose {
+
+    @prop()
+    get id( this: InstanceType<ModelType<Sprint>>): Promise<Sprint[]> {
+        return this._id
+    }
+
     @prop({required: true})
     number: string;
 
     @prop({required: true})
     pointsGiven: string;
 
-    @prop({required: true, ref: Mentor})
-    mentorId: Ref<Mentor>;
+    @prop({required: true})
+    mentor: string;
 
     @prop()
-    pointsAccomplished: string;
+    pointsDone: string;
 
     @prop()
     startDate: Date;

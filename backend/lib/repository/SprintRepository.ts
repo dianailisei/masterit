@@ -4,12 +4,14 @@ import { ISprintRepository } from "./ISprintRepository";
 
 @Provides(ISprintRepository)
 export class SprintRepository implements ISprintRepository {
-    getLastSprint(mentorId: string): Promise<Sprint[]> {
-        return this.sprintModel.find({mentorId, ended: false}).exec();
+    getAllByMentor(mentor: string): Promise<Sprint[]> {
+        return this.sprintModel.find({mentor}).exec();
     }
-    getAllByMentor(mentorId: string): Promise<Sprint[]> {
-        return this.sprintModel.find({mentorId}).exec();
+    
+    getLastSprint(mentor: string): Promise<Sprint[]> {
+        return this.sprintModel.find({mentor, ended: false}).exec();
     }
+    
     
     private sprintModel;
 

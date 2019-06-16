@@ -4,6 +4,13 @@ import { IFeedbackRepository } from "./IFeedbackRepository";
 
 @Provides(IFeedbackRepository)
 export class FeedbackRepository implements IFeedbackRepository {
+    getFeedbackByMentor(mentorId: string): Promise<Feedback[]> {
+        return this.FeedbackModel.find({mentorId}).exec();
+    }
+
+    getLastFeedback(mentorId: string): Promise<Feedback> {
+        return this.FeedbackModel.findOne({mentorId}).sort({creationDate: -1}).exec();
+    }
     
     private FeedbackModel;
 

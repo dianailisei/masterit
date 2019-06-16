@@ -1,7 +1,13 @@
-import { prop, Typegoose, Ref } from 'typegoose';
+import { prop, Typegoose, Ref, ModelType } from 'typegoose';
 import { Student } from './Student';
 
 export class Mentor extends Typegoose {
+
+    @prop()
+    get id( this: InstanceType<ModelType<Mentor>>): Promise<Mentor[]> {
+        return this._id
+    }
+
     @prop({ required: true })
     firstName: string;
 

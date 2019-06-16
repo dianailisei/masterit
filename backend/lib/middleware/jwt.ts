@@ -26,7 +26,7 @@ function authorizeMentor(req, res, next) {
         next();
     }
     else {
-        if (user.role !== "mentor") {
+        if (user.role !== "mentor" || (req.params.id && user.id !== req.params.id)) {
             res.sendStatus(403);
         }
         else {
@@ -38,7 +38,7 @@ function authorizeMentor(req, res, next) {
 
 function authorizeStudent(req, res, next) {
     let user = res.locals.tokenData.user;
-    if (user.role !== "student" || (req.params.id && user._id !== req.params.id)) {
+    if (user.role !== "student" || (req.params.id && user.id !== req.params.id)) {
         res.sendStatus(403);
     }
     else {

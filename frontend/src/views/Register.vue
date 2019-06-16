@@ -164,7 +164,8 @@ export default {
         lastName: "",
         email: "",
         password: "",
-        team: []
+        team: [],
+        approved: false
       },
       registerVerifyPwd: "",
       rules: {
@@ -203,44 +204,34 @@ export default {
         MentorService.login(this.loginUser)
           .then(res => {
             window.localStorage.setItem("token", res.data);
-            this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
-            this.$store.dispatch("SET_TEAM", {team: utils.decodeToken(res.data).user.team, token: res.data});
+            this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
             if (this.loginUser.email === "admin") {
               Router.push({ name: "Admin" });
             } else {
               Router.push({ name: "MentorDashboard" });
             }
           })
-          .catch(error => {
+          .catch(() => {
             this.$swal(
               "Warning!",
               "Oops! An error occured. Please try again!",
               "warning"
             ).then(Router.push({ name: "Register" }));
-            if (error.response) {
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
-            }
           });
       } else {
         StudentService.login(this.loginUser)
           .then(res => {
             window.localStorage.setItem("token", res.data);
-            this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
+            console.log(utils.decodeToken(res.data))
+            this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
             Router.push({ name: "StudentDashboard" });
           })
-          .catch(error => {
+          .catch(() => {
             this.$swal(
               "Warning!",
               "Oops! An error occured. Please try again!",
               "warning"
             ).then(Router.push({ name: "Register" }));
-            if (error.response) {
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
-            }
           });
       }
     },
@@ -249,44 +240,37 @@ export default {
         this.$swal("Warning!", "Passwords don't match!", "warning");
       } else {
         if (this.accountTypeRegister === "Mentor") {
+          this.registerUser.role = "mentor";
           MentorService.create(this.registerUser)
-            .then(res => {
-              window.localStorage.setItem("token", res.data);
-              this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
-              this.$store.dispatch("SET_TEAM", {team: utils.decodeToken(res.data).user.team, token:  res.data});
-              Router.push({ name: "MentorDashboard" });
+            .then(() => {
+              this.$swal(
+                "Warning!",
+                "Your account must be approved by an administrator first.",
+                "warning"
+              );
             })
-            .catch(error => {
+            .catch(() => {
               this.$swal(
                 "Warning!",
                 "Oops! An error occured. Please try again!",
                 "warning"
               ).then(Router.push({ name: "Register" }));
-              if (error.response) {
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-              }
             });
         } else {
+          this.registerUser.role = "student";
+          this.registerUser.submittedExam = false;
           StudentService.create(this.registerUser)
             .then(res => {
               window.localStorage.setItem("token", res.data);
-              this.$store.dispatch("SET_USER", utils.decodeToken(res.data));
+              this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
               Router.push({ name: "StudentDashboard" });
             })
-            .catch(error => {
+            .catch(() => {
               this.$swal(
                 "Warning!",
                 "Oops! An error occured. Please try again!",
                 "warning"
               ).then(Router.push({ name: "Register" }));
-
-              if (error.response) {
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-              }
             });
         }
       }

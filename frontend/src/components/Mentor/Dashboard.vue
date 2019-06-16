@@ -35,7 +35,7 @@
             <v-card-title>
               <h2 class="font-weight-thin">Team</h2>
             </v-card-title>
-            <v-card-text>
+            <v-card-text v-if="this.$store.getters.team.length !== 0">
               <v-list class="transparent">
                 <v-list-tile v-for="member in this.$store.getters.team" :key="member.name" route to="#" class="pa-1">
                   <v-list-tile-action>
@@ -49,6 +49,8 @@
                 </v-list-tile>
               </v-list>
             </v-card-text>
+            <v-card-text v-else>
+              <p class="subheading font-weight-thin">No members yet. 😪</p></v-card-text>
           </v-card>
         </v-flex>
       </v-layout>

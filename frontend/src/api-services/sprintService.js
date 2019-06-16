@@ -3,10 +3,10 @@
 const RESOURCE_NAME = '/api/v1/sprint';
 
 export default {
-    getAllByMentor(token) {
+    getAllByMentor(id, token) {
         return axios({
             method: 'get',
-            url: `${RESOURCE_NAME}/all`,
+            url: `${RESOURCE_NAME}/mentor/all/${id}`,
             headers: { Authorization: `Bearer ${token}` }
         });
     },
@@ -17,18 +17,18 @@ export default {
             headers: { Authorization: `Bearer ${token}` }
         });
     },
-    getLastSprint(token) {
+    getLastSprint(id, token) {
         return axios({
             method: 'get',
-            url: `${RESOURCE_NAME}/last`,
+            url: `${RESOURCE_NAME}/mentor/${id}`,
             headers: { Authorization: `Bearer ${token}` }
         });
     },
     create(sprint, token) {
         return axios({ method: 'post', url: `${RESOURCE_NAME}`, data: sprint, headers: { Authorization: `Bearer ${token}` } });
     },
-    update(id, data, token) {
-        return axios({ method: 'put', url: `${RESOURCE_NAME}/${id}`, data, headers: { Authorization: `Bearer ${token}` } })
+    update(data, token) {
+        return axios({ method: 'put', url: `${RESOURCE_NAME}/`, data, headers: { Authorization: `Bearer ${token}` } })
     },
     delete(id, token) {
         return axios({

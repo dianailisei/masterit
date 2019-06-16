@@ -6,14 +6,14 @@ export default {
     getAll(token) {
         return axios({
             method: 'get',
-            url: `${RESOURCE_NAME}/all`,
+            url: `${RESOURCE_NAME}`,
             headers: { Authorization: `Bearer ${token}` }
         });
     },
-    getById(token) {
+    getById(id, token) {
         return axios({
             method: 'get',
-            url: `${RESOURCE_NAME}`,
+            url: `${RESOURCE_NAME}/${id}`,
             headers: { Authorization: `Bearer ${token}` }
         });
     },
@@ -25,13 +25,13 @@ export default {
     create(mentor) {
         return axios({ method: 'post', url: `${RESOURCE_NAME}/register`, data: mentor });
     },
-    update(data, token) {
-        return axios({ method: 'put', url: `${RESOURCE_NAME}/update`, data, headers: { Authorization: `Bearer ${token}` } })
+    update(id, data, token) {
+        return axios({ method: 'put', url: `${RESOURCE_NAME}/${id}`, data, headers: { Authorization: `Bearer ${token}` } })
     },
-    delete(token) {
+    delete(id, token) {
         return axios({
             method: 'delete',
-            url: `${RESOURCE_NAME}`,
+            url: `${RESOURCE_NAME}/${id}`,
             headers: { Authorization: `Bearer ${token}` }
         });
     }

@@ -34,7 +34,7 @@ export class FeedbackController {
     public getAll(req: Request, res: Response): void {
         this.feedbackRepository.getAll()
             .then(feedbacks => {
-                if(feedbacks.length == 0) {
+                if (feedbacks.length == 0) {
                     res.status(this.HttpStatus_NoContent).send();
                 } else {
                     res.status(this.HttpStatus_OK).json(feedbacks)
@@ -45,6 +45,18 @@ export class FeedbackController {
 
     public getById(req: Request, res: Response): void {
         this.feedbackRepository.getById(req.params.id)
+            .then(feedback => res.status(this.HttpStatus_OK).json(feedback))
+            .catch(() => res.status(this.HttpStatus_NotFound).send());
+    }
+
+    public getLastFeedback(req: Request, res: Response): void {
+        this.feedbackRepository.getLastFeedback(req.params.id)
+            .then(feedback => res.status(this.HttpStatus_OK).json(feedback))
+            .catch(() => res.status(this.HttpStatus_NotFound).send());
+    }
+
+    public getByMentor(req: Request, res: Response): void {
+        this.feedbackRepository.getFeedbackByMentor(req.params.id)
             .then(feedback => res.status(this.HttpStatus_OK).json(feedback))
             .catch(() => res.status(this.HttpStatus_NotFound).send());
     }
@@ -70,14 +82,16 @@ export class FeedbackController {
     }
 
     private init(): any {
-        this.router.get('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.getAll.bind(this))
-            .get('/:id',this.middleware.checkAuth, this.middleware.authorizeMentor, this.getById.bind(this))
-            .post('/', this.middleware.checkAuth, this.middleware.authorizeStudent, this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this));
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
+            .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
+            .get('/mentor/:id', this.middleware.checkAuth, this.getLastFeedback.bind(this))
+            .get('/mentor/all/:id', this.middleware.checkAuth, this.getByMentor.bind(this))
+            .post('/', this.middleware.checkAuth, this.add.bind(this))
+            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.delete.bind(this));
     }
 
     public getRoutes(): Router {
         return this.router;
-    } 
+    }
 }

@@ -171,7 +171,7 @@ export default {
         pointsGiven: "",
         startDate: "",
         endDate: "",
-        ended:false
+        ended: false
       }
     };
   },
@@ -191,12 +191,13 @@ export default {
   methods: {
     createSprint() {
       if (this.$store.getters.getSprintRemainingDays === 0) {
+        this.sprint.mentor = this.$store.getters.user._id;
         SprintService.create(this.sprint, localStorage.getItem("token"))
           .then(() => {
-            this.$store.dispatch(
-              "SET_LAST_SPRINT",
-              localStorage.getItem("token")
-            );
+            this.$store.dispatch("SET_LAST_SPRINT", {
+              user: utils.decodeToken(localStorage.getItem("token")).user,
+              token: localStorage.getItem("token")
+            });
             this.$swal("Hooray!", "A new sprint has started!", "success").then(
               Router.push({ name: "MentorDashboard" })
             );
@@ -221,16 +222,13 @@ export default {
       this.dialog = false;
       this.endSprint.endDate = new Date();
       this.endSprint.ended = true;
-      SprintService.update(
-        this.$store.getters.lastSprint._id,
-        this.endSprint,
-        localStorage.getItem("token")
-      )
+      this.endSprint.id = this.$store.getters.lastSprint._id;
+      SprintService.update(this.endSprint, localStorage.getItem("token"))
         .then(() => {
-          this.$store.dispatch(
-            "SET_LAST_SPRINT",
-            localStorage.getItem("token")
-          );
+          this.$store.dispatch("SET_LAST_SPRINT", {
+            user: utils.decodeToken(localStorage.getItem("token")).user,
+            token: localStorage.getItem("token")
+          });
           this.$swal("Congrats!", "Your team finished a sprint!", "success");
         })
         .catch(err => console.log(err));

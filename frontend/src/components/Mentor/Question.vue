@@ -128,6 +128,7 @@ export default {
           })
           .catch(err => console.log(err));
       } else {
+        this.question.visible = false;
         QuestionService.create(this.question, localStorage.getItem("token"))
           .then(() => {
             this.clearQuestion();

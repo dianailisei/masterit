@@ -9,13 +9,10 @@
         <span class="font-weight-bold">IT</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <div v-if="links !== undefined">
-      <v-btn icon>
-        <i class="material-icons md-light">notifications</i>
-      </v-btn>
-      <v-btn icon route to="/mentor/settings">
-        <i class="material-icons md-light">settings</i>
-      </v-btn>
+      <div v-if="settingsRoute !== undefined">
+        <v-btn icon route :to="settingsRoute">
+          <i class="material-icons md-light">settings</i>
+        </v-btn>
       </div>
       <v-btn icon @click="logout">
         <i class="material-icons md-light">exit_to_app</i>
@@ -46,7 +43,7 @@
         <v-list class="pt-0" dense>
           <v-divider></v-divider>
 
-          <v-list-tile v-for="item in links" :key="item.title" route :to="item.route">
+          <v-list-tile active-class="navbarColor--text" v-for="item in links" :key="item.title" route :to="item.route">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -69,6 +66,10 @@ export default {
     links: {
       type: Array,
       required: false
+    },
+    settingsRoute: {
+      type: String,
+      required: false
     }
   },
   data() {
@@ -76,19 +77,24 @@ export default {
       drawer: true,
       mini: true,
       right: null,
-      userName: ''
+      userName: ""
     };
   },
   methods: {
-    logout(){
-        localStorage.removeItem("token");
+    logout() {
         this.$store.dispatch("RESET_STATE");
-        Router.push({name: "Register"})
+        window.localStorage.removeItem("token");
+        window.localStorage.removeItem("vuex");
+        Router.push({ name: "Register" });
     }
   },
   computed: {
     getUsername() {
-      return this.$store.getters.user.firstName + ' ' + this.$store.getters.user.lastName
+      return (
+        this.$store.getters.user.firstName +
+        " " +
+        this.$store.getters.user.lastName
+      );
     }
   }
 };

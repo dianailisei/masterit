@@ -81,13 +81,13 @@ export class QuestionController {
     }
 
     private init(): any {
-        this.router.get('/all', this.middleware.checkAuth, this.getAll.bind(this))
+        this.router.get('/', this.middleware.checkAuth, this.getAll.bind(this))
             .get('/:id', this.middleware.checkAuth, this.getById.bind(this))
             .get('/course/:id', this.middleware.checkAuth, this.getByCourseId.bind(this))
             .post('/', this.middleware.checkAuth, this.middleware.authorizeMentor, this.add.bind(this))
-            .put('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.update.bind(this))
-            .delete('/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.delete.bind(this))
-            .delete('/course/:id', this.middleware.checkAuth, this.middleware.authorizeMentor, this.deleteByCourseId.bind(this));
+            .put('/:id', this.middleware.checkAuth, this.update.bind(this))
+            .delete('/:id', this.middleware.checkAuth, this.delete.bind(this))
+            .delete('/course/:id', this.middleware.checkAuth, this.deleteByCourseId.bind(this));
     }
 
     public getRoutes(): Router {
