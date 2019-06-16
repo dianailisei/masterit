@@ -1,7 +1,7 @@
 <template>
   <main>
     <h1 class="font-weight-thin mx-5 my-3 white--text">Feedback Tests</h1>
-    <v-container v-if="$store.getters.lastSprint">
+    <v-container v-if="$store.getters.lastSprint && $store.getters.lastFeedbackTest!==null">
       <v-layout row wrap align-center justify-center>
         <v-card color="navbarColor" class="rounded-corners">
           <v-card-title>
@@ -31,7 +31,7 @@
         </v-card>
       </v-layout>
     </v-container>
-    <v-container v-else><p class="headline font-weight-thin white--text pa-5">No feedback test available. 😪</p></v-container>
+    <v-container v-else><p class="subheading font-weight-thin white--text">No feedback test available. 😪</p></v-container>
   </main>
 </template>
 

@@ -36,8 +36,17 @@
               <h2 class="font-weight-thin">Team</h2>
             </v-card-title>
             <v-card-text v-if="this.$store.getters.team.length !== 0">
+              <!-- <v-layout align-center justify-center row fill-height v-show="loadingTeam">
+                  <v-progress-circular :size="50" color="white" indeterminate></v-progress-circular>
+              </v-layout> -->
               <v-list class="transparent">
-                <v-list-tile v-for="member in this.$store.getters.team" :key="member.name" route to="#" class="pa-1">
+                <v-list-tile
+                  v-for="member in this.$store.getters.team"
+                  :key="member.name"
+                  route
+                  to="#"
+                  class="pa-1"
+                >
                   <v-list-tile-action>
                     <v-avatar size="50" class="grey lighten-2">
                       <img :src="member.profilePicture" v-if="member.profilePicture">
@@ -45,13 +54,16 @@
                     </v-avatar>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <h2 class="font-weight-thin white--text">{{member.firstName}} {{member.lastName}}</h2>
+                    <h2
+                      class="font-weight-thin white--text"
+                    >{{member.firstName}} {{member.lastName}}</h2>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
             </v-card-text>
             <v-card-text v-else>
-              <p class="subheading font-weight-thin">No members yet. 😪</p></v-card-text>
+              <p class="subheading font-weight-thin">No members yet. 😪</p>
+            </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
@@ -67,7 +79,7 @@ export default {
   name: "MentorDashboard",
   data() {
     return {
-      lastSprint: {}
+      loadingTeam: true
     };
   }
 };

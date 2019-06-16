@@ -72,10 +72,10 @@
       </v-layout>
     </v-container>
     <v-container v-else-if="$store.getters.user.submittedExam">
-      <p class="headline font-weight-thin white--text pa-5">You already submitted an exam.</p>
+      <p class="subheading font-weight-thin white--text">You already submitted an exam.</p>
     </v-container>
     <v-container v-else>
-      <p class="headline font-weight-thin white--text pa-5">Your exam is not available yet. 😪</p>
+      <p class="subheading font-weight-thin white--text">Your exam is not available yet. 😪</p>
     </v-container>
   </main>
 </template>
