@@ -5,6 +5,7 @@ const questions = state => state.questions;
 const goodPractices = state => state.goodPractices;
 const lastFeedbackTest = state => state.lastFeedbackTest;
 const feedbackTests= state => state.feedbackTests;
+const courses = state => state.courses;
 
 const getSprintRemainingDays = state => {
     let diffDays = 0, diffTime;
@@ -31,5 +32,6 @@ export default {
     questions,
     goodPractices,
     lastFeedbackTest,
-    feedbackTests
+    feedbackTests,
+    courses
 };

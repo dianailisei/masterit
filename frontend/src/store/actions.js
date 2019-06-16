@@ -4,6 +4,7 @@ import sprintService from "../api-services/sprintService";
 import questionService from "../api-services/QuestionService";
 import goodPracticeService from "../api-services/GoodPracticeService";
 import FeedbackService from "../api-services/FeedbackService";
+import CourseService from "../api-services/CourseService";
 
 const SET_USER = (context, payload) => {
     // console.log(payload.user.id)
@@ -56,6 +57,15 @@ const SET_FEEDBACK_TESTS = (context, payload) => {
         context.commit("SET_FEEDBACK_TESTS", res.data)
     })
 }
+
+const SET_COURSES = (context, payload) => {
+    CourseService.getAll(payload.token).then(res => {
+        let courses = {};
+        res.data.forEach(c => courses[c._id] = c.name);
+        context.commit("SET_COURSES", courses)
+    })
+}
 export default {
-    SET_USER, SET_LAST_SPRINT, RESET_STATE, SET_TEAM, SET_QUESTIONS, SET_GOOD_PRACTICES, SET_LAST_FEEDBACK, SET_FEEDBACK_TESTS
+    SET_USER, SET_LAST_SPRINT, RESET_STATE, SET_TEAM, SET_QUESTIONS, SET_GOOD_PRACTICES, SET_LAST_FEEDBACK, SET_FEEDBACK_TESTS,
+    SET_COURSES
 }

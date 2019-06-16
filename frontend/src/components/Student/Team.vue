@@ -12,7 +12,7 @@
             </v-responsive>
             <v-card-text>
               <div class="subheading pb-3">{{member.firstName}} {{member.lastName}}</div>
-              <p v-if="member.courseId" class="grey--text">{{ memberCourse(member.courseId) }}</p>
+              <p v-if="member.courseId" class="grey--text">{{$store.getters.courses[member.courseId]}}</p>
               <p v-else class="grey--text">Not Updated</p>
             </v-card-text>
           </v-card>
@@ -28,15 +28,11 @@
 </template>
 
 <script>
-import CourseService from "@/api-services/CourseService";
 export default {
   name: "StudentTeam",
-  methods: {
-    memberCourse(id) {
-      CourseService.getById(id, localStorage.getItem("token")).then(res => {
-        return res.data.name;
-      });
-    }
+  data() {
+    return {
+    };
   }
 };
 </script>

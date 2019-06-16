@@ -34,7 +34,7 @@
             </v-card-title>
             <v-card-text>
               <v-data-iterator
-                :items="goodPractices"
+                :items="$store.getters.goodPractices.rules"
                 :rows-per-page-items="rowsPerPageItems"
                 :pagination.sync="pagination"
                 content-tag="v-layout"
@@ -63,17 +63,11 @@ export default {
   name: "StudentDashboard",
   data() {
     return {
-      goodPractices: [],
       rowsPerPageItems: [3, 6, 9],
       pagination: {
         rowsPerPage: 6
       }
     };
-  },
-  created() {
-    this.$store.getters.goodPractices.rules.forEach(g => {
-      this.goodPractices.push(g);
-    });
   }
 };
 </script>

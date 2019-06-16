@@ -44,6 +44,7 @@ export class App {
     @Inject
     private goodPracticeController:GoodPracticeController;
 
+
     private config(): void {
         this.app.use(bodyParser.json({ type: 'application/json' }));
         this.app.use(bodyParser.urlencoded({ extended: false }));

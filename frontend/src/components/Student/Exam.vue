@@ -94,7 +94,7 @@ export default {
     };
   },
   created() {
-    if (this.$store.getters.user.submittedExam === false) {
+    if (this.$store.getters.user.submittedExam === false && this.$store.getters.user.courseId) {
       QuestionService.getByCourseId(
         this.$store.getters.user.courseId,
         localStorage.getItem("token")

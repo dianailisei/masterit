@@ -43,7 +43,13 @@
         <v-list class="pt-0" dense>
           <v-divider></v-divider>
 
-          <v-list-tile active-class="navbarColor--text" v-for="item in links" :key="item.title" route :to="item.route">
+          <v-list-tile
+            active-class="navbarColor--text"
+            v-for="item in links"
+            :key="item.title"
+            route
+            :to="item.route"
+          >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -82,19 +88,23 @@ export default {
   },
   methods: {
     logout() {
-        this.$store.dispatch("RESET_STATE");
-        window.localStorage.removeItem("token");
-        window.localStorage.removeItem("vuex");
-        Router.push({ name: "Register" });
+      this.$store.dispatch("RESET_STATE");
+      window.localStorage.removeItem("token");
+      window.localStorage.removeItem("vuex");
+      Router.push({ name: "Register" });
     }
   },
   computed: {
     getUsername() {
-      return (
-        this.$store.getters.user.firstName +
-        " " +
-        this.$store.getters.user.lastName
-      );
+      if (this.$store.getters.user !== null) {
+        return (
+          this.$store.getters.user.firstName +
+          " " +
+          this.$store.getters.user.lastName
+        );
+      } else {
+        return "";
+      }
     }
   }
 };

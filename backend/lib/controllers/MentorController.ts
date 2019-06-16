@@ -4,6 +4,7 @@ import { IMentorRepository } from "../repository/IMentorRepository";
 import { Mentor } from "../models/Mentor";
 import * as jwt from 'jsonwebtoken';
 import * as express from "express";
+import * as bcrypt from 'bcrypt';
 @Provides(MentorController)
 export class MentorController {
     private router;
@@ -60,8 +61,8 @@ export class MentorController {
     public login(req: Request, res: Response): void {
         this.mentorRepository.getByEmail(req.body.email)
             .then(user => {
-                if (user.password === req.body.password && user.approved === true) {
-                    jwt.sign( {user:{ id: user.id, role: user.role, email: user.email }}, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                if (bcrypt.compareSync(req.body.password, user.password) && user.approved === true) {
+                    jwt.sign({ user: { id: user.id, role: user.role, email: user.email } }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
                         res.status(this.HttpStatus_OK).json(token);
                     })
@@ -75,9 +76,10 @@ export class MentorController {
 
     public add(req: Request, res: Response): void {
         const newMentor = new this.mentorModel(req.body);
+        newMentor.password = bcrypt.hashSync(newMentor.password, 10)
         this.mentorRepository.add(newMentor)
             .then(user => {
-                jwt.sign({user:{ id: user.id, role: user.role, email: user.email }}, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                jwt.sign({ user: { id: user.id, role: user.role, email: user.email } }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
                     res.status(this.HttpStatus_Created).json(token);
                 })

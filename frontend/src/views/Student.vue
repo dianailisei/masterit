@@ -28,7 +28,8 @@ export default {
           route: "/student/feedback"
         }
       ],
-      settingsRoute: "/student/settings"
+      settingsRoute: "/student/settings",
+      courses: {}
     };
   },
   created() {
@@ -49,14 +50,17 @@ export default {
           },
           token: localStorage.getItem("token")
         });
-        this.$store.dispatch("SET_GOOD_PRACTICES", {
-          id: res.data.mentorId,
-          token: localStorage.getItem("token")
-        });
         this.$store.dispatch("SET_LAST_FEEDBACK", {
           id: res.data.mentorId,
           token: localStorage.getItem("token")
         });
+        this.$store.dispatch("SET_GOOD_PRACTICES", {
+          id: res.data.mentorId,
+          token: localStorage.getItem("token")
+        });
+        this.$store.dispatch("SET_COURSES", {
+          token:localStorage.getItem("token")}
+        );
         StudentService.getByMentor(
           res.data.mentorId,
           localStorage.getItem("token")

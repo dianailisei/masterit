@@ -83,6 +83,10 @@ export default new Router({
         {
           path: 'settings',
           component: () => import('./components/Mentor/Settings.vue')
+        },
+        {
+          path: 'results',
+          component: () => import('./components/Mentor/Results.vue')
         }
       ]
     },

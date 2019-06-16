@@ -29,7 +29,8 @@ export default {
           icon: "feedback",
           title: "Feedback tests",
           route: "/mentor/feedback"
-        }
+        },
+        { icon: "assessment", title: "Results", route: "/mentor/results" }
       ],
       settingsRoute: "/mentor/settings",
       lastSprint: ""
@@ -66,6 +67,9 @@ export default {
       });
       this.$store.dispatch("SET_GOOD_PRACTICES", {
         id: id,
+        token: localStorage.getItem("token")
+      });
+      this.$store.dispatch("SET_COURSES", {
         token: localStorage.getItem("token")
       });
     });

@@ -69,6 +69,7 @@
 <script>
 import CourseService from "@/api-services/CourseService";
 import StudentService from "@/api-services/studentService";
+import Router from "@/router";
 export default {
   name: "StudentSettings",
   data() {
@@ -116,7 +117,15 @@ export default {
         this.$store.getters.user._id,
         updatedStudent,
         localStorage.getItem("token")
-      ).then(res => this.$store.dispatch("SET_USER", {user: {id: res.data._id}, token:localStorage.getItem("token")}));
+      ).then(res => {
+        this.$store.dispatch("SET_USER", {
+          user: { id: res.data._id, role: res.data.role },
+          token: localStorage.getItem("token")
+        });
+        this.$swal("Success!", "", "success").then(
+          Router.push({ name: "StudentDashboard" })
+        );
+      });
     },
     clearInputs() {
       let inputs = document.getElementsByTagName("input");

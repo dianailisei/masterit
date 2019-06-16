@@ -88,8 +88,8 @@ export default {
       return Boolean(item.approved);
     },
     approveAccess(user) {
-      MentorService.update(
-        { id: user._id, approved: true },
+      MentorService.update(user._id, 
+        {approved: true },
         localStorage.getItem("token")
       )
         .then(res =>

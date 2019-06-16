@@ -137,12 +137,20 @@ export default {
       this.$store.getters.user._id,
       localStorage.getItem("token")
     ).then(res => {
-      // console.log(res.data)
-      res.data.forEach(s => this.sprints.push({ id: s._id, number: s.number }));
+      if (res.data) {
+        res.data.forEach(s =>
+          this.sprints.push({ id: s._id, number: s.number })
+        );
+      }
     });
-    this.$store.getters.goodPractices.rules.forEach(g => {
-      this.goodPractices.push(g);
-    });
+    if (
+      this.$store.getters.goodPractices &&
+      this.$store.getters.goodPractices.rules
+    ) {
+      this.$store.getters.goodPractices.rules.forEach(g => {
+        this.goodPractices.push(g);
+      });
+    }
   },
   methods: {
     sendFeedback() {
@@ -173,11 +181,6 @@ export default {
       }
     },
     addNewRule() {
-      console.log(
-        this.newRule,
-        this.$store.getters.user._id,
-        this.$store.getters.goodPractices
-      );
       this.goodPractices.push(this.newRule);
       GoodPracticeService.update(
         this.$store.getters.goodPractices._id,

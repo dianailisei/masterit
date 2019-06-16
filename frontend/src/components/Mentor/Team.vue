@@ -12,7 +12,7 @@
             </v-responsive>
             <v-card-text>
               <div class="subheading pb-3">{{member.firstName}} {{member.lastName}}</div>
-              <p v-if="member.position" class="grey--text">{{member.position}}</p>
+              <p v-if="member.courseId" class="grey--text">{{$store.getters.courses[member.courseId]}}</p>
               <p v-else class="grey--text">Not Updated</p>
             </v-card-text>
             <v-card-actions>
@@ -42,7 +42,7 @@
             </v-responsive>
             <v-card-text>
               <div class="subheading pb-3">{{member.firstName}} {{member.lastName}}</div>
-              <p v-if="member.position" class="grey--text">{{member.position}}</p>
+              <p v-if="member.courseId" class="grey--text">{{$store.getters.courses[member.courseId]}}</p>
               <p v-else class="grey--text">Not Updated</p>
             </v-card-text>
             <v-card-actions>

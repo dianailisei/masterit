@@ -4,6 +4,8 @@ import { IStudentRepository } from "../repository/IStudentRepository";
 import { Student } from "../models/Student";
 import * as jwt from 'jsonwebtoken';
 import * as express from "express";
+import * as bcrypt from 'bcrypt';
+
 @Provides(StudentController)
 export class StudentController {
     private router;
@@ -62,8 +64,8 @@ export class StudentController {
     public login(req: Request, res: Response): void {
         this.studentRepository.getByEmail(req.body.email)
             .then(user => {
-                if (user.password === req.body.password) {
-                    jwt.sign({user: { id: user.id, role: user.role, email: user.email }}, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                if (bcrypt.compareSync(req.body.password, user.password)) {
+                    jwt.sign({ user: { id: user.id, role: user.role, email: user.email } }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                         if (err) { console.log(err) }
                         res.status(this.HttpStatus_OK).json(token);
                     })
@@ -77,9 +79,10 @@ export class StudentController {
 
     public add(req: Request, res: Response): void {
         const newStudent = new this.studentModel(req.body);
+        newStudent.password = bcrypt.hashSync(newStudent.password, 10)
         this.studentRepository.add(newStudent)
             .then(user =>
-                jwt.sign({user:{ id: user.id, role: user.role, email: user.email }}, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
+                jwt.sign({ user: { id: user.id, role: user.role, email: user.email } }, process.env.SECRET_KEY, { expiresIn: '7 days' }, (err, token) => {
                     if (err) { console.log(err) }
                     res.status(this.HttpStatus_Created).json(token);
                 }))

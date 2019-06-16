@@ -222,7 +222,7 @@ export default {
         StudentService.login(this.loginUser)
           .then(res => {
             window.localStorage.setItem("token", res.data);
-            console.log(utils.decodeToken(res.data))
+            // console.log(utils.decodeToken(res.data))
             this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
             Router.push({ name: "StudentDashboard" });
           })
