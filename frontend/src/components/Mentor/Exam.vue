@@ -108,7 +108,7 @@ export default {
     };
   },
   created() {
-    // this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
+    this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
     CourseService.getAll(localStorage.getItem("token"))
       .then(res => {
         this.courses = res.data.map(c => {

@@ -181,21 +181,39 @@ export default {
       }
     },
     addNewRule() {
-      this.goodPractices.push(this.newRule);
-      GoodPracticeService.update(
-        this.$store.getters.goodPractices._id,
-        { rules: this.goodPractices },
-        localStorage.getItem("token")
-      ).then(res => {
-        console.log(res);
-        this.$store.dispatch("SET_GOOD_PRACTICES", {
-          id: this.$store.getters.user._id,
-          token: localStorage.getItem("token")
+      if (this.$store.getters.goodPractices) {
+        this.goodPractices.push(this.newRule);
+        GoodPracticeService.update(
+          this.$store.getters.goodPractices._id,
+          { rules: this.goodPractices },
+          localStorage.getItem("token")
+        ).then(res => {
+          // console.log(res);
+          this.$store.dispatch("SET_GOOD_PRACTICES", {
+            id: this.$store.getters.user._id,
+            token: localStorage.getItem("token")
+          });
+          this.newRule = "";
+          this.dialogBox = false;
+          this.$swal("Success!", "", "success");
         });
-        this.newRule = "";
-        this.dialogBox = false;
-        this.$swal("Success!", "", "success");
-      });
+      }
+      else {
+        GoodPracticeService.create(
+          { mentorId: this.$store.getters.user._id, 
+            rules: [this.newRule] },
+          localStorage.getItem("token")
+        ).then(res => {
+          // console.log(res);
+          this.$store.dispatch("SET_GOOD_PRACTICES", {
+            id: this.$store.getters.user._id,
+            token: localStorage.getItem("token")
+          });
+          this.newRule = "";
+          this.dialogBox = false;
+          this.$swal("Success!", "", "success");
+        });
+      }
     }
   }
 };

@@ -51,7 +51,7 @@
                 </template>
               </v-data-iterator>
             </v-card-text>
-            <v-card-text><p
+            <v-card-text v-else><p
         class="subheading font-weight-thin white--text"
       >No good practice rules added yet. 😪</p></v-card-text>
           </v-card>

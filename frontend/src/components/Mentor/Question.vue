@@ -1,10 +1,10 @@
 <template>
   <main>
-    <h1 class="font-weight-thin mx-5 my-3 white--text">Add/Edit Question</h1>
+    <h1 class="font-weight-thin mx-5 my-1 white--text">Add/Edit Question</h1>
     <v-container>
       <v-layout justify-center align-center>
         <v-flex xs12 sm12 md8 lg6>
-          <v-card color="navbarColor white--text" class="rounded-corners pa-4">
+          <v-card color="navbarColor white--text" class="rounded-corners pl-4 pr-4">
             <h2 class="font-weight-thin pb-1"></h2>
             <v-card-text>
               <v-form>
@@ -45,7 +45,7 @@
                 ></v-combobox>
                 <v-switch color="indigo darken-3" v-model="snippet" label="Snippet"></v-switch>
                 <v-textarea v-if="snippet" color="white" v-model="question.snippetContent"></v-textarea>
-                <v-layout align-center justify-end row fill-height class="pa-3">
+                <v-layout align-center justify-end row fill-height class="pl-3 pl-3 pt-3">
                   <v-btn color="white" outline fab @click="deleteQuestion" :disabled="!isInDb">
                     <v-icon>delete</v-icon>
                   </v-btn>
@@ -132,6 +132,7 @@ export default {
         QuestionService.create(this.question, localStorage.getItem("token"))
           .then(() => {
             this.clearQuestion();
+            this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
             this.$swal("Success!", "", "success");
           })
           .catch(err => console.log(err));
@@ -140,6 +141,7 @@ export default {
     deleteQuestion() {
       QuestionService.delete(this.question._id, localStorage.getItem("token"))
         .then(() => {
+          this.$store.dispatch("SET_QUESTIONS", localStorage.getItem("token"));
           this.$swal("Success!", "", "success").then(
             Router.push({ name: "Exam" })
           );

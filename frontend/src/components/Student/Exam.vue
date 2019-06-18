@@ -90,26 +90,36 @@ export default {
       questions: [],
       correctAnswers: [],
       answers: [],
-      numberOfCorrectAnswers: 0,
+      numberOfCorrectAnswers: 0
     };
   },
   created() {
-    if (this.$store.getters.user.submittedExam === false && this.$store.getters.user.courseId) {
+    if (
+      this.$store.getters.user.submittedExam === false &&
+      this.$store.getters.user.courseId
+    ) {
       QuestionService.getByCourseId(
         this.$store.getters.user.courseId,
         localStorage.getItem("token")
       ).then(res => {
-        this.questions = res.data;
-        this.questions.forEach((q, index) => {
-          q.answers.forEach((a, index1) => {
-            q.answers[index1] = {
-              value: this.isCorrect(a, q.correctAnswers),
-              text: a
-            };
+        if (res.data) {
+          res.data.forEach(q => {
+            if(q.visible === true){
+              this.questions.push(q)
+            }
+          })
+          // this.questions = res.data;
+          this.questions.forEach((q, index) => {
+            q.answers.forEach((a, index1) => {
+              q.answers[index1] = {
+                value: this.isCorrect(a, q.correctAnswers),
+                text: a
+              };
+            });
+            this.answers[index] = [];
+            this.correctAnswers[index] = q.correctAnswers;
           });
-          this.answers[index] = [];
-          this.correctAnswers[index] = q.correctAnswers;
-        });
+        }
       });
     }
   },
@@ -136,7 +146,7 @@ export default {
         localStorage.getItem("token")
       ).then(res => {
         this.$store.dispatch("SET_USER", {
-          user: {id: res.data._id},
+          user: { id: res.data._id },
           token: localStorage.getItem("token")
         });
         this.$swal(

@@ -4,7 +4,7 @@
     <v-container>
       <v-layout justify-center align-center>
         <v-flex xs12 sm12 md8 lg6>
-          <v-card color="navbarColor white--text" class="rounded-corners pa-4">
+          <v-card color="navbarColor white--text" class="rounded-corners pl-4 pt-4 pr-4">
             <h2 class="font-weight-thin pb-1">Alarms settings</h2>
             <v-card-text>
               <v-form>
