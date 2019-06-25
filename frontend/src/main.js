@@ -6,7 +6,7 @@ import Axios from 'axios'
 import { store } from './store/store'
 import VueSwal from 'vue-swal'
 import Utils from './utils'
-
+// import '../public/serviceWorker'
 Vue.use(VueSwal)
 Vue.config.productionTip = false
 

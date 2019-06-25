@@ -21,7 +21,7 @@ export default {
       links: [
         { icon: "dashboard", title: "Dashboard", route: "/student/dashboard" },
         { icon: "people", title: "Team", route: "/student/team" },
-        { icon: "assignment", title: "Exam", route: "/student/exam" },
+        { icon: "assignment", title: "Evaluation", route: "/student/evaluation" },
         {
           icon: "feedback",
           title: "Feedback tests",

@@ -13,6 +13,9 @@ import { FeedbackRepository } from "../repository/FeedbackRepository";
 import { IFeedbackRepository } from "../repository/IFeedbackRepository";
 import { GoodPracticeRepository } from "../repository/GoodPracticeRepository";
 import { IGoodPracticeRepository } from "../repository/IGoodPracticeRepository";
+import { MeetingRepository } from "../repository/MeetingRepository";
+import { IMeetingRepository } from "../repository/IMeetingRepository";
+
 export class IocContainerConfig {
 
     static configure() {
@@ -23,5 +26,6 @@ export class IocContainerConfig {
         Container.bind(IQuestionRepository).to(QuestionRepository);
         Container.bind(IFeedbackRepository).to(FeedbackRepository);
         Container.bind(IGoodPracticeRepository).to(GoodPracticeRepository);
+        Container.bind(IMeetingRepository).to(MeetingRepository);
     }
 }

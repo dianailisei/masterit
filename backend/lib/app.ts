@@ -2,6 +2,8 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 import * as morgan from "morgan";
+import * as path from "path";
+
 import { MentorController } from "./controllers/MentorController";
 import { StudentController } from "./controllers/StudentController";
 import { CourseController } from "./controllers/CourseController";
@@ -9,15 +11,17 @@ import { SprintController } from "./controllers/SprintController";
 import { QuestionController } from "./controllers/QuestionController";
 import { FeedbackController } from "./controllers/FeedbackController";
 import { GoodPracticeController } from "./controllers/GoodPracticeController";
+import { MeetingController } from "./controllers/MeetingController";
 import { config, IocContainerConfig } from "./config";
 import { Inject } from "typescript-ioc";
-
+import { NotificationController } from "./controllers/NotificationController";
 export class App {
 
     constructor(dbUrl?: string) {
         this.app = express();
         this.config();
         this.mongoConfig(dbUrl);
+        this.webPushConfig();
         this.routes();
     }
 
@@ -42,8 +46,13 @@ export class App {
     private feedbackController: FeedbackController;
 
     @Inject
-    private goodPracticeController:GoodPracticeController;
+    private goodPracticeController: GoodPracticeController;
 
+    @Inject
+    private meetingController: MeetingController;
+
+    @Inject
+    private notificationController: NotificationController;
 
     private config(): void {
         this.app.use(bodyParser.json({ type: 'application/json' }));
@@ -68,6 +77,16 @@ export class App {
             });
     }
 
+    public webPushConfig() {
+        const webpush = require('web-push');
+
+        const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
+        const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
+
+        // Replace with your email
+        webpush.setVapidDetails('mailto:dianailisei@gmail.com', publicVapidKey, privateVapidKey);
+    }
+
     private routes(): void {
         this.app.use('/api/v1/mentor', this.mentorController.getRoutes());
         this.app.use('/api/v1/student', this.studentController.getRoutes());
@@ -75,11 +94,14 @@ export class App {
         this.app.use('/api/v1/sprint', this.sprintController.getRoutes());
         this.app.use('/api/v1/question', this.questionController.getRoutes());
         this.app.use('/api/v1/feedback', this.feedbackController.getRoutes());
-        this.app.use('/api/v1/goodPractice', this.goodPracticeController.getRoutes())
+        this.app.use('/api/v1/goodPractice', this.goodPracticeController.getRoutes());
+        this.app.use('/api/v1/meeting', this.meetingController.getRoutes());
+        this.app.use('/subscribe', this.notificationController.getRoutes());
     }
 
     public getExpressApp(): express.Application {
         this.app.use('/uploads', express.static('uploads'));
+        this.app.use(express.static(path.join(__dirname, "frontend")))
         return this.app;
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h1 class="font-weight-thin mx-5 my-3 white--text">Exam Results</h1>
+    <h1 class="font-weight-thin mx-5 my-3 white--text">Evaluation Results</h1>
     <v-container v-if="Object.keys(results).length !== 0">
       <v-layout align-center row wrap>
         <v-flex xs12 sm12 md8 lg8 align-center offset-md2 offset-lg2 class="py-5">

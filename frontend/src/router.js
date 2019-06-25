@@ -26,7 +26,7 @@ export default new Router({
           component: () => import('./components/Student/Team.vue')
         },
         {
-          path: 'exam',
+          path: 'evaluation',
           component: () => import('./components/Student/Exam.vue')
         },
         {
@@ -63,7 +63,7 @@ export default new Router({
           component: () => import('./components/Mentor/SprintSettings.vue')
         },
         {
-          path: 'exam',
+          path: 'evaluation',
           name: "Exam",
           component: () => import('./components/Mentor/Exam.vue')
         },

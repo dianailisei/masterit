@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h1 class="font-weight-thin mx-5 my-3 white--text">Exam</h1>
+    <h1 class="font-weight-thin mx-5 my-3 white--text">Evaluation</h1>
     <v-container>
       <v-layout align-center row wrap>
         <v-flex xs12 sm12 md12 lg12>

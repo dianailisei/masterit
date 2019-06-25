@@ -155,7 +155,7 @@ export default {
       showPwd1: false,
       showPwd2: false,
       showPwd3: false,
-      accountType: ["Mentor", "Student"],
+      accountType: ["Mentor", "Intern"],
       accountTypeLogin: "",
       accountTypeRegister: "",
       loginUser: { email: "", password: "" },
@@ -203,6 +203,7 @@ export default {
       if (this.accountTypeLogin === "Mentor") {
         MentorService.login(this.loginUser)
           .then(res => {
+            // navigator.serviceWorker.controller.postMessage(res.data);
             window.localStorage.setItem("token", res.data);
             this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
             if (this.loginUser.email === "admin") {
