@@ -16,7 +16,8 @@ export const store = new Vuex.Store({
     goodPractices: [],
     feedbackTests:[],
     lastFeedbackTest: {},
-    courses: {}
+    courses: {},
+    meetings: {}
   },
   actions,
   getters,

@@ -24,7 +24,11 @@ export default {
         { icon: "meeting_room", title: "Meetings", route: "/mentor/meetings" },
         { icon: "build", title: "Sprint settings", route: "/mentor/sprints" },
         { icon: "done_outline", title: "Questions", route: "/mentor/question" },
-        { icon: "assignment", title: "Evaluation", route: "/mentor/evaluation" },
+        {
+          icon: "assignment",
+          title: "Evaluation",
+          route: "/mentor/evaluation"
+        },
         {
           icon: "feedback",
           title: "Feedback tests",
@@ -70,6 +74,10 @@ export default {
         token: localStorage.getItem("token")
       });
       this.$store.dispatch("SET_COURSES", {
+        token: localStorage.getItem("token")
+      });
+      this.$store.dispatch("SET_MEETINGS", {
+        id: id,
         token: localStorage.getItem("token")
       });
     });

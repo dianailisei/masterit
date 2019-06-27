@@ -82,6 +82,7 @@
                       required
                       :rules="[rules.verifyPassword]"
                       v-model="registerVerifyPwd"
+                      
                     ></v-text-field>
                     <v-btn flat class="white--text" @click="register">submit</v-btn>
                     <v-btn flat class="white--text" @click="clearInputs">clear</v-btn>
@@ -112,6 +113,7 @@
                       clearable
                       required
                       v-model="loginUser.email"
+                      :rules="[rules.required, rules.email]"
                     ></v-text-field>
                     <v-text-field
                       :append-icon="showPwd3 ? 'visibility' : 'visibility_off'"
@@ -123,6 +125,7 @@
                       @click:append="showPwd3 = !showPwd3"
                       required
                       v-model="loginUser.password"
+                      :rules="[rules.required]"
                     ></v-text-field>
 
                     <v-btn flat class="white--text" @click="login">log in</v-btn>
@@ -133,6 +136,30 @@
             </v-card-text>
           </v-card>
         </v-flex>
+        <v-layout justify-center row wrap v-show="!dark1 && !dark2">
+          <div
+            class="font-weight-thin my-5 white--text bigtext"
+           
+          >WELCOME TO MASTER IT!</div>
+          <v-flex md12>
+            <v-layout justify-center>
+              <v-icon dark>check_box</v-icon>
+              <h2 class="font-weight-thin white--text">&ensp;Efficient team coordination</h2>
+            </v-layout>
+          </v-flex>
+          <v-flex md12>
+            <v-layout justify-center my-3>
+              <v-icon dark>check_box</v-icon>
+              <h2 class="font-weight-thin white--text">&ensp;Evaluation made easy</h2>
+            </v-layout>
+          </v-flex>
+          <v-flex md12>
+            <v-layout justify-center>
+              <v-icon dark>check_box</v-icon>
+              <h2 class="font-weight-thin white--text">&ensp;Teamwork at its best</h2>
+            </v-layout>
+          </v-flex>
+        </v-layout>
       </v-layout>
     </v-container>
   </main>
@@ -203,16 +230,20 @@ export default {
       if (this.accountTypeLogin === "Mentor") {
         MentorService.login(this.loginUser)
           .then(res => {
-            // navigator.serviceWorker.controller.postMessage(res.data);
             window.localStorage.setItem("token", res.data);
-            this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
+            this.$store.dispatch("SET_USER", {
+              user: utils.decodeToken(res.data).user,
+              token: localStorage.getItem("token")
+            });
             if (this.loginUser.email === "admin") {
               Router.push({ name: "Admin" });
             } else {
+              this.registerSW(utils.decodeToken(res.data).user.id);
               Router.push({ name: "MentorDashboard" });
             }
           })
-          .catch(() => {
+          .catch(err => {
+            console.log(err);
             this.$swal(
               "Warning!",
               "Oops! An error occured. Please try again!",
@@ -224,7 +255,10 @@ export default {
           .then(res => {
             window.localStorage.setItem("token", res.data);
             // console.log(utils.decodeToken(res.data))
-            this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
+            this.$store.dispatch("SET_USER", {
+              user: utils.decodeToken(res.data).user,
+              token: localStorage.getItem("token")
+            });
             Router.push({ name: "StudentDashboard" });
           })
           .catch(() => {
@@ -263,7 +297,10 @@ export default {
           StudentService.create(this.registerUser)
             .then(res => {
               window.localStorage.setItem("token", res.data);
-              this.$store.dispatch("SET_USER", {user: utils.decodeToken(res.data).user, token:localStorage.getItem("token")});
+              this.$store.dispatch("SET_USER", {
+                user: utils.decodeToken(res.data).user,
+                token: localStorage.getItem("token")
+              });
               Router.push({ name: "StudentDashboard" });
             })
             .catch(() => {
@@ -275,6 +312,58 @@ export default {
             });
         }
       }
+    },
+    registerSW(id) {
+      if ("serviceWorker" in navigator) {
+        send().catch(err => console.log(err));
+      }
+
+      async function send() {
+        const publicVAPIDKey =
+          "BAX6kWxVcUeibkPhHX2Z-YEudZEqGJTqAKSchjh1uhAEhR7Xp_cZ07Op0mq6Y34Jy3nqCahSam2vfwh0ievyEo4";
+        const register = await navigator.serviceWorker.register(
+          "../worker.js",
+          {
+            scope: "/"
+          }
+        );
+        const subscription = await register.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicVAPIDKey)
+        });
+        console.log(subscription);
+
+        // eslint-disable-next-line no-constant-condition
+        await fetch("http://localhost:4041/subscribe", {
+          method: "POST",
+          body: JSON.stringify({ subscription, mentorId: id }),
+          headers: {
+            "content-type": "application/json"
+          }
+        });
+      }
+
+      function urlBase64ToUint8Array(base64String) {
+        const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+        const base64 = (base64String + padding)
+          .replace(/-/g, "+")
+          .replace(/_/g, "/");
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+      }
+
+      // async function requestNotificationPermission() {
+      //   const permission = await window.Notification.requestPermission();
+      //   if (permission !== "granted") {
+      //     throw new Error("Permission not granted for Notification");
+      //   } else return permission;
+      // }
     }
   }
 };
@@ -283,5 +372,8 @@ export default {
 <style>
 .rounded-corners {
   border-radius: 5px;
+}
+.bigtext {
+  font-size: 80px;
 }
 </style>

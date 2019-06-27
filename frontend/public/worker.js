@@ -1,11 +1,20 @@
 console.log('Loaded service worker!');
 
+// Install Service Worker
+self.addEventListener('install', function (event) {
+  console.log('installed!');
+});
+
+// Service Worker Active
+self.addEventListener('activate', function (event) {
+  console.log('activated!');
+});
+
 self.addEventListener('push', ev => {
-  const data = ev.data.json();
-  // console.log('Got push', data);
-  
-  self.registration.showNotification(data.title, {
-    body: 'Hello, World!',
-    icon: 'http://mongoosejs.com/docs/images/mongoose5_62x30_transparent.png'
+  const alarm = ev.data.json();
+  // console.log('Got push', alarm);
+  self.registration.showNotification("Hurry up!", {
+    body: `Your ${alarm.name} starts in about 5 minutes`,
+    icon: './notification.png'
   });
 });

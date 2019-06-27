@@ -6,6 +6,7 @@ const goodPractices = state => state.goodPractices;
 const lastFeedbackTest = state => state.lastFeedbackTest;
 const feedbackTests= state => state.feedbackTests;
 const courses = state => state.courses;
+const meetings = state => state.meetings;
 
 const getSprintRemainingDays = state => {
     let diffDays = 0, diffTime;
@@ -22,7 +23,7 @@ const getSprintRemainingDays = state => {
         }
         diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
-    return diffDays;
+    return diffDays||0;
 }
 export default {
     user,
@@ -33,5 +34,6 @@ export default {
     goodPractices,
     lastFeedbackTest,
     feedbackTests,
-    courses
+    courses,
+    meetings
 };

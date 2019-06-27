@@ -27,7 +27,7 @@
                   chips
                   deletable-chips
                   :search-input.sync="search"
-                  @keyup.tab="updateTags"
+                  @keyup.tab="updateAllAnswers"
                   color="white"
                   required
                 ></v-combobox>
@@ -38,8 +38,8 @@
                   append-icon
                   chips
                   deletable-chips
-                  :search-input.sync="search"
-                  @keyup.tab="updateTags"
+                  :search-input.sync="search1"
+                  @keyup.tab="updateCorrectAnswers"
                   required
                   color="white"
                 ></v-combobox>
@@ -80,7 +80,8 @@ export default {
         courseId: ""
       },
       courses: ["JAVA", ".NET", "Testing", "DevOps"],
-      search: ""
+      search: "",
+      search1: ''
     };
   },
   computed: {
@@ -93,10 +94,20 @@ export default {
     }
   },
   methods: {
-    updateTags() {
+    updateAllAnswers() {
       this.$nextTick(() => {
         if (this.search != "" || this.search !== null) {
           this.question.answers.push(...this.search.split(","));
+        }
+        this.$nextTick(() => {
+          this.search = "";
+        });
+      });
+    },
+     updateCorrectAnswers() {
+      this.$nextTick(() => {
+        if (this.search != "" || this.search !== null) {
+          this.question.correctAnswers.push(...this.search.split(","));
         }
         this.$nextTick(() => {
           this.search = "";

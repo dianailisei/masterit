@@ -3,7 +3,7 @@
     <h1 class="font-weight-thin mx-5 my-3 white--text">Dashboard</h1>
     <v-container class="my-5">
       <v-layout row wrap>
-        <v-flex xs12 sm6 md3 lg4 class="px-4 pb-4">
+        <v-flex xs12 sm6 md3 lg3 class="px-4 pb-4">
           <v-card color="navbarColor" class="rounded-corners white--text darken-1">
             <v-card-title>
               <h2 class="font-weight-thin">Sprint Stats</h2>
@@ -20,14 +20,21 @@
             </v-card-actions>
           </v-card>
         </v-flex>
-        <v-flex xs12 sm6 md3 lg3 class="px-4 pb-3">
+        <v-flex xs12 sm6 md3 lg4 class="px-4 pb-3">
           <v-card color="cardColor" class="rounded-corners white--text">
             <v-card-title>
-              <h2 class="font-weight-thin">Your next meeting</h2>
+              <h2 class="font-weight-thin">Your next meetings</h2>
             </v-card-title>
-            <v-card-text>
-              <p class="subheading font-weight-thin">2 mins until daily</p>
+            <v-card-text v-if="$store.getters.meetings.length !== 0">
+              <div class="subheading" v-for="m in $store.getters.meetings" :key="m._id">
+                <span class="font-weight-light">{{m.name}}</span> -
+                <span class="font-weight-thin">{{m.day}}, {{m.hour}}</span>
+              </div>
             </v-card-text>
+            <v-card-text v-else>No meetings added yet. 😪</v-card-text>
+            <v-card-actions>
+              <v-btn flat class="white--text font-weight-light" route to="meetings">Set meetings</v-btn>
+            </v-card-actions>
           </v-card>
         </v-flex>
         <v-flex xs12 sm12 md6 lg5 class="px-4">
@@ -38,7 +45,7 @@
             <v-card-text v-if="this.$store.getters.team.length !== 0">
               <!-- <v-layout align-center justify-center row fill-height v-show="loadingTeam">
                   <v-progress-circular :size="50" color="white" indeterminate></v-progress-circular>
-              </v-layout> -->
+              </v-layout>-->
               <v-list class="transparent">
                 <v-list-tile
                   v-for="member in this.$store.getters.team"
@@ -74,13 +81,21 @@
 <script>
 /* eslint-disable no-undef */
 /* eslint-disable vue/no-side-effects-in-computed-properties */
-// import MentorService from "@/api-services/mentorService";
+// import MeetingService from "@/api-services/MeetingService";
 export default {
   name: "MentorDashboard",
   data() {
     return {
       loadingTeam: true
     };
+  },
+  mounted() {
+    //   MeetingService.getNextMeeting(
+    //     this.$store.getters.user._id,
+    //     localStorage.getItem("token")
+    //   )
+    //     .then(res => console.log(res))
+    //     .catch(err => console.log(err));
   }
 };
 </script>

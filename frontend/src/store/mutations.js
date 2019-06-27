@@ -16,6 +16,8 @@ const SET_GOOD_PRACTICES = (state, payload) => state.goodPractices = payload;
 const SET_LAST_FEEDBACK = (state, payload) => state.lastFeedbackTest = payload;
 const SET_FEEDBACK_TESTS = (state, payload) => state.feedbackTests = payload;
 const SET_COURSES = (state, payload) => state.courses = payload;
+const SET_MEETINGS = (state, payload) => state.meetings = payload;
+
 const RESET_STATE = (state) => {
   state.user = {};
   state.team = [];
@@ -25,8 +27,9 @@ const RESET_STATE = (state) => {
   state.lastFeedbackTest = {};
   state.feedbackTests = [];
   state.courses = {};
+  state.meetings = {};
 }
 export default {
   SET_USER, SET_LAST_SPRINT, RESET_STATE, SET_TEAM, SET_QUESTIONS, SET_GOOD_PRACTICES,
-  SET_LAST_FEEDBACK, SET_FEEDBACK_TESTS, SET_COURSES
+  SET_LAST_FEEDBACK, SET_FEEDBACK_TESTS, SET_COURSES, SET_MEETINGS
 };

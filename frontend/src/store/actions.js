@@ -5,6 +5,7 @@ import questionService from "../api-services/QuestionService";
 import goodPracticeService from "../api-services/GoodPracticeService";
 import FeedbackService from "../api-services/FeedbackService";
 import CourseService from "../api-services/CourseService";
+import MeetingService from "../api-services/MeetingService";
 
 const SET_USER = (context, payload) => {
     // console.log(payload.user.id)
@@ -65,7 +66,13 @@ const SET_COURSES = (context, payload) => {
         context.commit("SET_COURSES", courses)
     })
 }
+
+const SET_MEETINGS = (context, payload) => {
+    MeetingService.getByMentorId(payload.id, payload.token).then(res => {
+        context.commit("SET_MEETINGS", res.data)
+    })
+}
 export default {
     SET_USER, SET_LAST_SPRINT, RESET_STATE, SET_TEAM, SET_QUESTIONS, SET_GOOD_PRACTICES, SET_LAST_FEEDBACK, SET_FEEDBACK_TESTS,
-    SET_COURSES
+    SET_COURSES, SET_MEETINGS
 }
