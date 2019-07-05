@@ -13,7 +13,7 @@
             <v-card-title>
               <h2 class="font-weight-light pb-1 pl-2">{{course}}</h2>
             </v-card-title>
-            <v-card-text>
+            <v-card-text v-if="results[index] !== undefined">
               <v-list class="transparent">
                 <v-list-tile v-for="member in results[index]" :key="member.name" class="pa-2">
                   <v-list-tile-action>
@@ -27,6 +27,9 @@
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
+            </v-card-text>
+            <v-card-text v-else>
+              <p class="subheading font-weight-thin">No results available.</p>
             </v-card-text>
           </v-card>
         </v-flex>

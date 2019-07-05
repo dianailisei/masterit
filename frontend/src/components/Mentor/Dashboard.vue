@@ -31,7 +31,8 @@
                 <span class="font-weight-thin">{{m.day}}, {{m.hour}}</span>
               </div>
             </v-card-text>
-            <v-card-text v-else>No meetings added yet. 😪</v-card-text>
+            <v-card-text v-else>
+              <p class="subheading font-weight-thin">No meetings added yet. 😪</p></v-card-text>
             <v-card-actions>
               <v-btn flat class="white--text font-weight-light" route to="meetings">Set meetings</v-btn>
             </v-card-actions>
